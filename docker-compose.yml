@@ -1,0 +1,62 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+
+  db:
+    container_name: db
+    image: postgres:13
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+      # POSTGRES_DB: mydatabase
+      PGDATA: /var/lib/postgresql/data
+    volumes:
+      - ./db/data:/var/lib/postgresql/data
+      - ./db/db_init.sql:/docker-entrypoint-initdb.d/db_init.sql
+    ports:
+      - "5432:5432"
+    networks:
+      - db
+    restart: unless-stopped
+  
+  db_manager:
+    container_name: db_manager
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-pgadmin4@pgadmin.org}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-admin}
+    volumes:
+      - ./db/db_manager:/root/.pgadmin
+    ports:
+      - "${PGADMIN_PORT:-5050}:80"
+    depends_on:
+      - db
+    networks:
+      - db
+    restart: unless-stopped
+
+  frontend:
+    container_name: adapt-ai
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    volumes:
+      - /frontend/node_modules
+      - ./frontend:/frontend
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+networks:
+  db:
+    driver: bridge
