@@ -1,2 +1,5 @@
 flask
-numpy
+flask-sqlalchemy
+flask-login
+flask-jwt-extended
+psycopg2-binary
