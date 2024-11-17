@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import './PatientProfiles.css';
+import { useNavigate } from 'react-router-dom';
 
 function PatientProfiles() {
     const [patients, setPatients] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchPatients = async () => {
@@ -16,7 +18,7 @@ function PatientProfiles() {
                         Authorization: `Bearer ${token}` // Attach token to Authorization header
                     }
                 });
-
+                console.info('here: ', response.data);
                 if (response.data.length === 0) {
                     setPatients([]);
                 } else {
@@ -34,6 +36,15 @@ function PatientProfiles() {
         fetchPatients();
     }, []); // Run this effect once on component mount
 
+    const handleRowClick = (patientId) => {
+        const userConfirmed = window.confirm(
+            'Accessing patient information. Make sure no one else can see your screen. Data protected by HIPAA.'
+        );
+        if (userConfirmed) {
+            navigate(`/patient/${patientId}`); // Navigate to the patient details page
+        }
+    };
+
     if (loading) {
         return <div>Loading patients...</div>;
     }
@@ -42,20 +53,6 @@ function PatientProfiles() {
         return <div>{error}</div>;
     }
 
-    // return (
-    //     <div>
-    //         <h2>Patient List</h2>
-    //         {error && <p style={{ color: 'red' }}>{error}</p>}
-    //         <ul>
-    //             {patients.map((patient) => (
-    //                 <li key={patient.id}>{patient.name}</li>
-    //             ))}
-    //         </ul>
-
-    //         {/* Include the Feedback Form Below */}
-    //         <FeedbackForm />
-    //     </div>
-    // );
     return (
         <div className="patient-container">
             <h2>Patient List</h2>
@@ -73,10 +70,17 @@ function PatientProfiles() {
                     </thead>
                     <tbody>
                         {patients.map((patient) => (
-                            <tr key={patient.id}>
+                            <tr
+                                key={patient.id}
+                                onClick={() => handleRowClick(patient.id)} // Handle row click
+                                className="clickable-row"
+                            >
                                 <td>{patient.id}</td>
                                 <td>{patient.name}</td>
-                                <td>{patient.age}</td>
+                                <td className="secure-age">
+                                    <span className="masked">***</span>
+                                    <span className="unmasked">{patient.age}</span>
+                                </td>
                                 <td>{patient.caregiver}</td>
                             </tr>
                         ))}

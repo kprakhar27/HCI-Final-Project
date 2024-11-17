@@ -31,6 +31,39 @@
     text-align: center;
 }
 
+.patient-table tr {
+    cursor: pointer;
+    /* Makes rows appear clickable */
+    transition: background-color 0.3s ease;
+}
+
 .patient-table tr:hover {
     background: #f1f1f1;
+}
+
+/* Secure Age Column */
+.secure-age {
+    position: relative;
+    font-style: italic;
+    /* Optional for styling masked data */
+    color: #666;
+    /* Subtle color for masked data */
+}
+
+.secure-age .masked {
+    display: inline;
+}
+
+.secure-age .unmasked {
+    display: none;
+    color: #333;
+    /* Ensure visible text is prominent */
+}
+
+.secure-age:hover .masked {
+    display: none;
+}
+
+.secure-age:hover .unmasked {
+    display: inline;
 }

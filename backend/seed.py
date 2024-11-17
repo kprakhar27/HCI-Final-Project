@@ -11,7 +11,7 @@ with app.app_context():
     db.session.query(Users).delete()
 
     # Add new data
-    caregiver = Users(username='test1', password_hash=generate_password_hash('test1'), role='caregiver')
+    caregiver = Users(username='testseed', password_hash=generate_password_hash('testseed'), role='caregiver')
     db.session.add(caregiver)
     db.session.commit()
 
@@ -19,6 +19,14 @@ with app.app_context():
     patient = Patient(name='Patient A', age=30, caregiver_id=caregiver.id) 
     db.session.add(patient)
     db.session.commit()  
+
+    patient = Patient(name='Patient B', age=25, caregiver_id=caregiver.id) 
+    db.session.add(patient)
+    db.session.commit()  
+
+    patient = Patient(name='Patient C', age=32, caregiver_id=caregiver.id) 
+    db.session.add(patient)
+    db.session.commit()
 
     feedback = Feedback(caregiver_id=caregiver.id, feedback_text='Great platform!', patient_id=patient.id)
     db.session.add(feedback)

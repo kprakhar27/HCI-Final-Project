@@ -1,46 +1,111 @@
-/* General Dashboard Layout */
+/* Header Styling */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding: 10px 20px;
+    background-color: #f8f9fa;
+    /* Light background */
+    border-bottom: 1px solid #ddd;
+    /* Optional bottom border */
+    margin-bottom: 20px;
+    /* Space below the header */
+}
+
+/* Profile Section */
+.profile-section {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    /* Space between profile picture and buttons */
+}
+
+/* Profile Picture */
+.profile-pic {
+    width: 80px;
+    /* Larger size for better visibility */
+    height: 80px;
+    border-radius: 50%;
+    border: 3px solid #007bff;
+    /* Blue border */
+    object-fit: cover;
+}
+
+/* Profile Buttons */
+.profile-buttons {
+    display: flex;
+    flex-direction: column;
+    /* Stack buttons vertically */
+    gap: 10px;
+    /* Space between buttons */
+}
+
+.profile-buttons button {
+    background-color: #007bff;
+    color: white;
+    padding: 12px 20px;
+    /* Larger padding for bigger buttons */
+    font-size: 16px;
+    /* Adjust font size */
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 160px;
+    /* Wider buttons */
+    text-align: center;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+    /* Subtle shadow */
+}
+
+.profile-buttons button:hover {
+    background-color: #0056b3;
+    /* Darker blue on hover */
+    box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.2);
+    /* Slightly stronger shadow */
+}
+
+/* Dashboard Content */
 .dashboard-container {
     display: flex;
     flex-direction: column;
     align-items: center;
     padding: 20px;
     position: relative;
-    background-image: url('images/caregiverwallpaper.jpg');
-    /* Use relative path from public folder */
     background-size: cover;
-    /* Ensure the image covers the entire background */
     background-position: center;
-    /* Center the image */
-    background-attachment: fixed;
-    /* Fix the background while scrolling */
     min-height: 100vh;
-    /* Ensure the background fills the entire height of the page */
 }
 
 /* Feedback Button */
 .feedback-btn {
     background-color: #ff9900;
     color: white;
-    padding: 10px 20px;
+    padding: 12px 24px;
     font-size: 16px;
     border: none;
-    cursor: pointer;
     border-radius: 5px;
+    cursor: pointer;
     position: fixed;
     bottom: 20px;
-    /* Position the button at the bottom */
     right: 20px;
-    /* Align it to the right */
 }
 
 .feedback-btn:hover {
     background-color: #e68900;
 }
 
-/* Responsive layout adjustments for mobile */
+/* Responsive Layout */
 @media (max-width: 768px) {
-    .dashboard-container {
-        padding: 10px;
+    .profile-pic {
+        width: 60px;
+        /* Adjusted size for smaller screens */
+        height: 60px;
+    }
+
+    .profile-buttons button {
+        padding: 10px 15px;
+        font-size: 14px;
     }
 
     .feedback-btn {

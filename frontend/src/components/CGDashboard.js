@@ -4,34 +4,45 @@ import FeedbackForm from './Feedback';
 import RequestPatientsButton from './RequestPatients';
 import './CGDashboard.css';
 import { Link, useNavigate } from 'react-router-dom';
+import PatientDetails from './PatientDetails';
+import profilePic from './images/profilepicture.jpg';
 
 function CGDashboard() {
     const [patients, setPatients] = useState([]);
-    const [loading, setLoading] = useState(true);  // Add loading state to handle fetch state
+    const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const navigate = useNavigate();
 
     useEffect(() => {
         // Fetch patients on load
-        fetch('http://127.0.0.1:5000/api/patients', {
+        fetch('http://127.0.0.1:5000/auth/patients', {
             headers: {
                 Authorization: `Bearer ${localStorage.getItem('token')}`,
             },
         })
-            .then((response) => response.json())
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error('Failed to fetch patients');
+                }
+                return response.json();
+            })
             .then((data) => {
                 setPatients(data);
                 setLoading(false);
             })
-            .catch((error) => {
-                setError('Error fetching patients');
+            .catch(() => {
+                setError('No patients assigned');
                 setLoading(false);
             });
     }, []);
 
+    const handlePatientClick = (patientId) => {
+        // Navigate to PatientDetails page
+        navigate(`/patients/${patientId}`);
+    };
+
     const handleFeedbackSubmit = (feedback) => {
-        // Send feedback to backend
-        fetch('http://127.0.0.1:5000/api/feedback', {
+        fetch('http://127.0.0.1:5000/auth/feedback', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -39,10 +50,15 @@ function CGDashboard() {
             },
             body: JSON.stringify({ feedback_text: feedback }),
         })
-            .then((response) => response.json())
-            .then((data) => {
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error('Failed to submit feedback');
+                }
+                return response.json();
+            })
+            .then(() => {
                 alert('Feedback submitted!');
-                navigate('/cgdashboard'); // Redirect back to dashboard after feedback submission
+                navigate('/cgdashboard'); // Redirect to dashboard after feedback submission
             })
             .catch((error) => {
                 console.error('Error submitting feedback:', error);
@@ -52,9 +68,10 @@ function CGDashboard() {
 
     return (
         <div className="dashboard-container">
+            {/* Header */}
             <div className="header">
                 <div className="profile-section">
-                    <img src="images/profilepicture.jpg" alt="Profile" className="profile-pic" />
+                    <img src={profilePic} alt="Profile" className="profile-pic" />
                     <div className="profile-buttons">
                         <button>My Profile</button>
                         <button>Account Details</button>
@@ -62,6 +79,7 @@ function CGDashboard() {
                     </div>
                 </div>
             </div>
+
             <h2>Welcome to your Dashboard</h2>
 
             {/* Loading or Error Handling */}
@@ -72,9 +90,9 @@ function CGDashboard() {
             ) : (
                 <>
                     {patients.length === 0 ? (
-                        <p>No patients assigned</p>  // Display this message if no patients exist
+                        <p>No patients assigned</p>
                     ) : (
-                        <PatientProfiles patients={patients} />
+                        <PatientProfiles patients={patients} onPatientClick={handlePatientClick} />
                     )}
                 </>
             )}
