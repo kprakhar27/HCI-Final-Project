@@ -1,7 +1,6 @@
 from flask import Flask
 from flask_jwt_extended import JWTManager
 from flask_cors import CORS
-# from flask_migrate import Migrate
 from .config import Config
 from .models import db, Users, Patient, Feedback
 
@@ -14,7 +13,6 @@ def create_app():
     CORS(app, origins=["http://localhost:3000"])
 
     db.init_app(app)
-    # migrate.init_app(app, db)
     jwt.init_app(app)
 
     # Register blueprints here to avoid circular imports
