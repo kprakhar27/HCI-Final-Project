@@ -1,10 +1,13 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import './FeedbackForm.css';
+import { useNavigate } from 'react-router-dom';
 
 const FeedbackForm = () => {
     const [feedback, setFeedback] = useState('');
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
+    const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -27,25 +30,28 @@ const FeedbackForm = () => {
             );
             setSuccess('Feedback submitted successfully!');
             setFeedback(''); // Reset feedback input
+            setTimeout(() => {
+                navigate('/cgdashboard'); // Redirect to dashboard
+            }, 1000);
         } catch (error) {
             setError('Failed to submit feedback.');
         }
     };
 
     return (
-        <div>
-            <h2>Provide Feedback</h2>
+        <div className="feedback-container">
+            <h3>Provide Feedback</h3>
             <form onSubmit={handleSubmit}>
                 <textarea
+                    placeholder="Share your thoughts here..."
                     value={feedback}
                     onChange={(e) => setFeedback(e.target.value)}
-                    placeholder="Enter your feedback here"
                     required
-                />
+                ></textarea>
                 <button type="submit">Submit Feedback</button>
             </form>
-            {error && <p style={{ color: 'red' }}>{error}</p>}
-            {success && <p style={{ color: 'green' }}>{success}</p>}
+            {error && <p className="error">{error}</p>}
+            {success && <p className="success">{success}</p>}
         </div>
     );
 };

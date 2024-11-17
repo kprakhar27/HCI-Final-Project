@@ -1,0 +1,50 @@
+/* General Dashboard Layout */
+.dashboard-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    position: relative;
+    background-image: url('images/caregiverwallpaper.jpg');
+    /* Use relative path from public folder */
+    background-size: cover;
+    /* Ensure the image covers the entire background */
+    background-position: center;
+    /* Center the image */
+    background-attachment: fixed;
+    /* Fix the background while scrolling */
+    min-height: 100vh;
+    /* Ensure the background fills the entire height of the page */
+}
+
+/* Feedback Button */
+.feedback-btn {
+    background-color: #ff9900;
+    color: white;
+    padding: 10px 20px;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    position: fixed;
+    bottom: 20px;
+    /* Position the button at the bottom */
+    right: 20px;
+    /* Align it to the right */
+}
+
+.feedback-btn:hover {
+    background-color: #e68900;
+}
+
+/* Responsive layout adjustments for mobile */
+@media (max-width: 768px) {
+    .dashboard-container {
+        padding: 10px;
+    }
+
+    .feedback-btn {
+        bottom: 10px;
+        right: 10px;
+    }
+}

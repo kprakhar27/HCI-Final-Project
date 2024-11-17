@@ -3,6 +3,7 @@ import LoginPage from './components/Login';
 import RegisterPage from './components/Register';
 import PatientProfiles from './components/PatientProfiles';
 import FeedbackPage from './components/Feedback';
+import CGDashboard from './components/CGDashboard';
 
 function App() {
   return (
@@ -10,8 +11,8 @@ function App() {
       <Routes>
         <Route path="/" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />  {/* Add Register Route */}
-        <Route path="/patients" element={<PatientProfiles />} /> {/* Add the PatientList route */}
-        <Route path="/feedback" element={<FeedbackPage />} />
+        <Route path="/cgdashboard" element={<CGDashboard />} /> {/* Add the dashboard route */}
+        <Route path="/feedback" element={<FeedbackPage />} /> {/* Add this route */}
       </Routes>
     </Router>
   );

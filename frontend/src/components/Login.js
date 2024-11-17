@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import './Login.css'; // Custom CSS for login page
 
 function LoginPage() {
     const [username, setUsername] = useState('');
@@ -12,33 +13,33 @@ function LoginPage() {
         try {
             const response = await axios.post('http://127.0.0.1:5000/auth/login', { username, password });
             localStorage.setItem('token', response.data.access_token);
-            navigate('/patients');
+            navigate('/cgdashboard');
         } catch (error) {
             alert('Login failed!');
         }
     };
 
     return (
-        <div>
-            <h2>Login</h2>
-            <form onSubmit={handleSubmit}>
+        <div className="login-container">
+            <form className="login-form" onSubmit={handleSubmit}>
+                <h2>Welcome Back</h2>
                 <input
                     type="text"
-                    placeholder="Username"
+                    placeholder="Enter Username"
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
                     required
                 />
                 <input
                     type="password"
-                    placeholder="Password"
+                    placeholder="Enter Password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
                 />
                 <button type="submit">Login</button>
+                <p>Don't have an account? <a href="/register">Register</a></p>
             </form>
-            <p>Don't have an account? <a href="/register">Register here</a></p>  {/* Link to Register Page */}
         </div>
     );
 }
