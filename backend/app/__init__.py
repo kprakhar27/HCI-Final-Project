@@ -17,8 +17,14 @@ def create_app():
         
         from .routes import ai_bp
         from .auth import auth_bp
+        from .revoked_tokens import is_token_revoked
 
         app.register_blueprint(ai_bp)
         app.register_blueprint(auth_bp)
+        
+         # Configure JWT to check if the token is revoked by querying the database
+        @jwt.token_in_blocklist_loader
+        def check_if_token_revoked(jwt_header, jwt_payload):
+            return is_token_revoked(jwt_payload)
 
     return app

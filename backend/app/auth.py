@@ -1,9 +1,10 @@
 from flask import request, jsonify, Blueprint
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.exceptions import BadRequestKeyError
-from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
+from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity, get_jwt
 
 from .models import Users, db
+from .revoked_tokens import add_token_to_blocklist
 
 auth_bp = Blueprint('auth', __name__)
 
@@ -38,10 +39,32 @@ def register():
 @auth_bp.route('/login', methods=['POST'])
 def login():
     data = request.get_json()
-    user = Users.query.filter_by(username=data['username']).first()
+    username = data.get('username')
+    password = data.get('password')
 
-    if not user or not check_password_hash(user.password_hash, data['password']):
-        return jsonify({'message': 'Invalid credentials'}), 401
+    # Find user by username
+    user = Users.query.filter_by(username=username).first()
 
+    if not user or not check_password_hash(user.password_hash, password):
+        return jsonify({"message": "Invalid credentials"}), 401
+
+    # Create a new access token for this user
     access_token = create_access_token(identity={'username': user.username})
+
+    # Store the generated access token in the user's record
+    user.access_token = access_token
+    db.session.commit()  # Commit changes to save updated token
+
     return jsonify(access_token=access_token), 200
+
+# Logout route - revoke access token and store it in PostgreSQL
+@auth_bp.route('/logout', methods=['POST'])
+@jwt_required()
+def logout():
+    # Get the current token's unique identifier (JTI)
+    jti = get_jwt()["jti"]
+
+    # Add the JTI to the blocklist (revoking the token) by storing it in PostgreSQL
+    add_token_to_blocklist(jti)
+
+    return jsonify({"message": "Successfully logged out"}), 200
