@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import FeedbackForm from './Feedback';
 
 function PatientProfiles() {
     const [patients, setPatients] = useState([]);
@@ -37,14 +38,16 @@ function PatientProfiles() {
 
     return (
         <div>
-            <h2>Patients Profiles</h2>
+            <h2>Patient List</h2>
+            {error && <p style={{ color: 'red' }}>{error}</p>}
             <ul>
                 {patients.map((patient) => (
-                    <li key={patient.id}>
-                        {patient.name} - Age: {patient.age}
-                    </li>
+                    <li key={patient.id}>{patient.name}</li>
                 ))}
             </ul>
+
+            {/* Include the Feedback Form Below */}
+            <FeedbackForm />
         </div>
     );
 }

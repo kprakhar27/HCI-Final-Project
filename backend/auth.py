@@ -99,3 +99,25 @@ def add_patient():
     db.session.commit()
 
     return jsonify({'message': 'Patient added successfully'}), 201
+
+@auth_bp.route('/feedback', methods=['POST'])
+@jwt_required()
+def give_feedback():
+    current_user = get_jwt_identity()
+    caregiver = Users.query.filter_by(username=current_user['username']).first()
+
+    if caregiver:
+        data = request.get_json()
+        feedback_text = data.get('feedback_text')
+
+        if not feedback_text:
+            return jsonify({'message': 'Feedback text is required'}), 400
+
+        # Create the feedback entry
+        feedback = Feedback(caregiver_id=caregiver.id, feedback_text=feedback_text)
+        db.session.add(feedback)
+        db.session.commit()
+
+        return jsonify({'message': 'Feedback submitted successfully'}), 200
+
+    return jsonify({'message': 'Unauthorized'}), 403
