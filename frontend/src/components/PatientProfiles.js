@@ -1,35 +1,50 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
 
 function PatientProfiles() {
     const [patients, setPatients] = useState([]);
-    const navigate = useNavigate();
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
     useEffect(() => {
         const fetchPatients = async () => {
-            const token = localStorage.getItem('token');
             try {
-                const response = await axios.get('http://localhost:8000/patients', {
-                    headers: { Authorization: `Bearer ${token}` },
+                const token = localStorage.getItem('token'); // Get JWT token from localStorage
+                const response = await axios.get('http://127.0.0.1:5000/auth/patients', {
+                    headers: {
+                        Authorization: `Bearer ${token}` // Attach token to Authorization header
+                    }
                 });
-                setPatients(response.data);
+                setPatients(response.data); // Set the patients data
+                setLoading(false); // Stop loading
             } catch (error) {
-                alert('Failed to fetch patients!');
+                setError('Failed to fetch patients');
+                setLoading(false);
+                console.error('error fetching patients:', error.response || error.message);
             }
         };
+
         fetchPatients();
-    }, []);
+    }, []); // Run this effect once on component mount
+
+    if (loading) {
+        return <div>Loading patients...</div>;
+    }
+
+    if (error) {
+        return <div>{error}</div>;
+    }
 
     return (
         <div>
-            <h2>Patient Profiles</h2>
+            <h2>Patients Profiles</h2>
             <ul>
                 {patients.map((patient) => (
-                    <li key={patient.id}>{patient.name}, {patient.age} years old</li>
+                    <li key={patient.id}>
+                        {patient.name} - Age: {patient.age}
+                    </li>
                 ))}
             </ul>
-            <button onClick={() => navigate('/feedback')}>Submit Feedback</button>
         </div>
     );
 }
