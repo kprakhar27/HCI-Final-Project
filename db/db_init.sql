@@ -22,21 +22,30 @@ CREATE TABLE IF NOT EXISTS revoked_tokens (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE patient (
+CREATE TABLE IF NOT EXISTS caregiver (
 	id SERIAL PRIMARY KEY, 
 	name VARCHAR(80) NOT NULL, 
 	age INTEGER NOT NULL, 
-	caregiver_id INTEGER NOT NULL, 
+	user_id INTEGER NOT NULL, 
 	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-	FOREIGN KEY(caregiver_id) REFERENCES users (id)
+	FOREIGN KEY(user_id) REFERENCES users (id)
 );
 
-CREATE TABLE feedback (
+CREATE TABLE IF NOT EXISTS patient (
 	id SERIAL PRIMARY KEY, 
-	caregiver_id INTEGER NOT NULL, 
-	patient_id INTEGER, 
+	name VARCHAR(80) NOT NULL, 
+	age INTEGER NOT NULL, 
+    user_id INTEGER NOT NULL
+	caregiver_id INTEGER, 
+	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY(user_id) REFERENCES users (id)
+	FOREIGN KEY(caregiver_id) REFERENCES caregiver (id)
+);
+
+CREATE TABLE IF NOT EXISTS feedback (
+	id SERIAL PRIMARY KEY, 
+	user_id INTEGER NOT NULL,
 	feedback_text TEXT NOT NULL, 
 	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, 
-	FOREIGN KEY(caregiver_id) REFERENCES users (id), 
-	FOREIGN KEY(patient_id) REFERENCES patient (id)
+	FOREIGN KEY(user_id) REFERENCES users (id)
 );
