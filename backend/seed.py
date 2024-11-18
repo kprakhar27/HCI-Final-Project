@@ -5,6 +5,8 @@ from werkzeug.security import generate_password_hash
 app = create_app()
 
 with app.app_context():
+    db.create_all()
+    
     # Clear existing data
     db.session.query(Feedback).delete()
     db.session.query(Patient).delete()
