@@ -3,7 +3,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.exceptions import BadRequestKeyError
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity, get_jwt
 
-from .models import Users, db
+from .models import Users, db, Patient, Feedback
 from .revoked_tokens import add_token_to_blocklist
 
 auth_bp = Blueprint('auth', __name__)
@@ -87,7 +87,6 @@ def get_patients():
         # Fetch patients assigned to the caregiver
         patients = Patient.query.filter_by(caregiver_id=caregiver.id).all()
         patients_list = [{'id': patient.id, 'name': patient.name, 'age': patient.age} for patient in patients]
-
         return jsonify(patients_list), 200
     else:
         return jsonify({'message': 'Caregiver not found'}), 404
