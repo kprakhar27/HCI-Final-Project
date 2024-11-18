@@ -1,9 +1,10 @@
 from flask import request, jsonify, Blueprint
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.exceptions import BadRequestKeyError
-from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
+from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity, get_jwt
 
 from .models import Users, db, Patient, Feedback
+from .revoked_tokens import add_token_to_blocklist
 
 auth_bp = Blueprint('auth', __name__)
 
@@ -56,6 +57,18 @@ def login():
 
     access_token = create_access_token(identity={'username': user.username})
     return jsonify(access_token=access_token), 200
+
+# Logout route - revoke access token and store it in PostgreSQL
+@auth_bp.route('/logout', methods=['POST'])
+@jwt_required()
+def logout():
+    # Get the current token's unique identifier (JTI)
+    jti = get_jwt()["jti"]
+
+    # Add the JTI to the blocklist (revoking the token) by storing it in PostgreSQL
+    add_token_to_blocklist(jti)
+
+    return jsonify({"message": "Successfully logged out"}), 200
 
 
 @auth_bp.route('/patients', methods=['GET'])

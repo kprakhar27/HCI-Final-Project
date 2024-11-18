@@ -4,7 +4,9 @@ CREATE TABLE IF NOT EXISTS users (
     id SERIAL PRIMARY KEY,
     username VARCHAR(50) UNIQUE NOT NULL,
     password_hash VARCHAR(255) NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    access_token VARCHAR(500),
+    role VARCHAR(50)
 );
 
 CREATE TABLE IF NOT EXISTS messages (
@@ -12,4 +14,29 @@ CREATE TABLE IF NOT EXISTS messages (
     user_id INTEGER REFERENCES users(id),
     content TEXT NOT NULL,
     timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS revoked_tokens (
+    id SERIAL PRIMARY KEY,
+    jti VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE patient (
+	id SERIAL PRIMARY KEY, 
+	name VARCHAR(80) NOT NULL, 
+	age INTEGER NOT NULL, 
+	caregiver_id INTEGER NOT NULL, 
+	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	FOREIGN KEY(caregiver_id) REFERENCES users (id)
+);
+
+CREATE TABLE feedback (
+	id SERIAL PRIMARY KEY, 
+	caregiver_id INTEGER NOT NULL, 
+	patient_id INTEGER, 
+	feedback_text TEXT NOT NULL, 
+	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, 
+	FOREIGN KEY(caregiver_id) REFERENCES users (id), 
+	FOREIGN KEY(patient_id) REFERENCES patient (id)
 );
