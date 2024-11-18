@@ -2,8 +2,9 @@ from flask import request, jsonify, Blueprint
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.exceptions import BadRequestKeyError
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity, get_jwt
+from sqlalchemy import text
 
-from .models import Users, db
+from .models import Users, db, Patient, Feedback
 from .revoked_tokens import add_token_to_blocklist
 
 auth_bp = Blueprint('auth', __name__)
@@ -88,15 +89,28 @@ def get_patients():
     current_user = get_jwt_identity()  # Get the current logged-in user's identity
     print('Current_user:', current_user)
     caregiver = Users.query.filter_by(username=current_user['username']).first()  # Get user by username
+    
+    query = f"""SELECT *
+		FROM users u
+		JOIN patient p 
+		ON u.id=p.user_id
+		AND p.caregiver_id={caregiver.id};"""
+  
+    with db.engine.connect() as conn:
+        result = conn.execute(text(query))
+        
+    patients_list = [] 
+    for row in result:
+        patients_list.append(row._asdict())
 
-    if caregiver:
-        # Fetch patients assigned to the caregiver
-        patients = Patient.query.filter_by(caregiver_id=caregiver.id).all()
-        patients_list = [{'id': patient.id, 'name': patient.name, 'age': patient.age} for patient in patients]
+    # if caregiver:
+    #     # Fetch patients assigned to the caregiver
+    #     patients = Patient.query.filter_by(caregiver_id=caregiver.id).all()
+    #     patients_list = [{'id': patient.id, 'name': patient.name, 'age': patient.age} for patient in patients]
 
-        return jsonify(patients_list), 200
-    else:
-        return jsonify({'message': 'Caregiver not found'}), 404
+    return jsonify(patients_list), 200
+    # else:
+    #     return jsonify({'message': 'Caregiver not found'}), 404
 
 
 @auth_bp.route('/add_patient', methods=['POST'])

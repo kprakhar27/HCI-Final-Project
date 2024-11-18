@@ -21,7 +21,7 @@ function LoginPage() {
                       Authorization: `Bearer ${localStorage.getItem('token')}`
                     }
                   });
-                  if (response.data.response == "TRUE") {
+                  if (response.data.response === "TRUE") {
                     navigate('/main')
                   } else {
                     navigate('/profile')

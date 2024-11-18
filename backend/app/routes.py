@@ -1,7 +1,7 @@
 from flask import Blueprint, jsonify, request
 from flask_jwt_extended import jwt_required
 
-from .models import Patient, Feedback, Users
+from .models import Patient, Feedback, Users, db
 
 ai_bp = Blueprint('ai', __name__)
 routes_bp = Blueprint('routes', __name__)
