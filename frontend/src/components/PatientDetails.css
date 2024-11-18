@@ -1,0 +1,23 @@
+.patient-details-container {
+    margin: 2rem;
+    padding: 1.5rem;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.patient-details-container h2 {
+    text-align: center;
+    color: #2575fc;
+    margin-bottom: 1.5rem;
+}
+
+.patient-details-container p {
+    font-size: 18px;
+    color: #333;
+    margin: 0.5rem 0;
+}
+
+.patient-details-container p strong {
+    color: #007bff;
+}

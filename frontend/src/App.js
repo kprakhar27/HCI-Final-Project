@@ -1,24 +1,20 @@
-import logo from './logo.svg';
-import './App.css';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import LoginPage from './components/Login';
+import RegisterPage from './components/Register';
+import PatientProfiles from './components/PatientProfiles';
+import FeedbackPage from './components/Feedback';
+import CGDashboard from './components/CGDashboard';
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      <Routes>
+        <Route path="/" element={<LoginPage />} />
+        <Route path="/register" element={<RegisterPage />} />  {/* Add Register Route */}
+        <Route path="/cgdashboard" element={<CGDashboard />} /> {/* Add the dashboard route */}
+        <Route path="/feedback" element={<FeedbackPage />} /> {/* Add this route */}
+      </Routes>
+    </Router>
   );
 }
 
