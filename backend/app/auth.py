@@ -76,6 +76,12 @@ def logout():
 
     return jsonify({"message": "Successfully logged out"}), 200
 
+@auth_bp.route('/validate-token', methods=['GET'])
+@jwt_required()
+def validate_token():
+    current_user = get_jwt_identity()
+    return jsonify({"valid": True, "user": current_user}), 200
+
 @auth_bp.route('/patients', methods=['GET'])
 @jwt_required()  # Ensure user is authenticated with JWT
 def get_patients():

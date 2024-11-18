@@ -2,111 +2,146 @@ import React, { useState, useEffect } from 'react';
 import PatientProfiles from './PatientProfiles';
 import FeedbackForm from './Feedback';
 import RequestPatientsButton from './RequestPatients';
-// Change css later
-import './CGDashboard.css'; 
+import './Main.css'; 
 import { Link, useNavigate } from 'react-router-dom';
 import PatientDetails from './PatientDetails';
 import profilePic from './images/profilepicture.jpg';
 
 function Main() {
-    const [patients, setPatients] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
-    const navigate = useNavigate();
+  const [messages, setMessages] = useState([]); // Store conversation history
+  const [input, setInput] = useState(''); // Store user input
+  const [loading, setLoading] = useState(false); // Handle loading state
+  const navigate = useNavigate();
 
-    useEffect(() => {
-        // Fetch patients on load
-        fetch('http://127.0.0.1:8000/auth/patients', {
-            headers: {
-                Authorization: `Bearer ${localStorage.getItem('token')}`,
-            },
-        })
-            .then((response) => {
-                if (!response.ok) {
-                    throw new Error('Failed to fetch patients');
-                }
-                return response.json();
-            })
-            .then((data) => {
-                setPatients(data);
-                setLoading(false);
-            })
-            .catch(() => {
-                setError('No patients assigned');
-                setLoading(false);
-            });
-    }, []);
+  // Check if token is valid on component load
+  useEffect(() => {
+    const checkTokenValidity = async () => {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        navigate('/'); // No token found, redirect to login
+        return;
+      }
 
-    const handlePatientClick = (patientId) => {
-        // Navigate to PatientDetails page
-        navigate(`/patients/${patientId}`);
+      console.log()
+
+      try {
+        const response = await fetch('http://127.0.0.1:8000/auth/validate-token', {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        });
+
+        if (response.ok) {
+          // Token is valid, proceed with loading chatbot
+          console.log('Token is valid');
+        } else {
+          // Token is invalid or expired, redirect to login
+          localStorage.removeItem('access_token'); // Clear invalid token
+          navigate('/');
+        }
+      } catch (error) {
+        console.error('Error validating token:', error);
+        localStorage.removeItem('access_token'); // Clear invalid token
+        navigate('/');
+      }
     };
 
-    const handleFeedbackSubmit = (feedback) => {
-        fetch('http://127.0.0.1:8000/auth/feedback', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${localStorage.getItem('token')}`,
-            },
-            body: JSON.stringify({ feedback_text: feedback }),
-        })
-            .then((response) => {
-                if (!response.ok) {
-                    throw new Error('Failed to submit feedback');
-                }
-                return response.json();
-            })
-            .then(() => {
-                alert('Feedback submitted!');
-                navigate('/cgdashboard'); // Redirect to dashboard after feedback submission
-            })
-            .catch((error) => {
-                console.error('Error submitting feedback:', error);
-                alert('Failed to submit feedback');
-            });
-    };
+    checkTokenValidity();
+  }, [navigate]);
 
-    return (
-        <div className="dashboard-container">
-            {/* Header */}
-            <div className="header">
-                <div className="profile-section">
-                    <img src={profilePic} alt="Profile" className="profile-pic" />
-                    <div className="profile-buttons">
-                        <button>My Profile</button>
-                        <button>Account Details</button>
-                        <button>Contact</button>
-                    </div>
-                </div>
+  // Handle input field changes
+  const handleInputChange = (e) => {
+    setInput(e.target.value);
+  };
+
+  // Handle sending message to LLM API (e.g., OpenAI)
+  const handleSendMessage = async () => {
+    if (!input.trim()) return; // Prevent sending empty messages
+
+    const userMessage = { role: 'user', text: input };
+    setMessages((prevMessages) => [...prevMessages, userMessage]); // Add user message to chat
+
+    setLoading(true); // Start loading state while waiting for response
+    setInput(''); // Clear input field
+
+    try {
+      const response = await fetch('http://127.0.0.1:8000/user/llm', {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('token')}` 
+        },
+        body: JSON.stringify({ prompt: input }), // Send prompt to backend or LLM API
+      });
+
+      const data = await response.json();
+      const botMessage = { role: 'bot', text: data.response }; // Assume API returns { response: "..." }
+      setMessages((prevMessages) => [...prevMessages, botMessage]); // Add bot response to chat
+    } catch (error) {
+      console.error('Error fetching LLM response:', error);
+      const errorMessage = { role: 'bot', text: "Sorry, I couldn't process that." };
+      setMessages((prevMessages) => [...prevMessages, errorMessage]);
+    } finally {
+      setLoading(false); // Stop loading state after response is received
+    }
+  };
+
+  // Handle logout functionality
+  const handleLogout = async () => {
+    try {
+      const token = localStorage.getItem('access_token'); // Get access token from localStorage
+
+      const response = await fetch('http://127.0.0.1:8000/auth/logout', {
+        method: 'POST',
+        headers: {
+          // 'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('token')}`// Send access token in Authorization header
+        },
+      });
+
+      if (response.ok) {
+        localStorage.removeItem('access_token'); // Remove access token from localStorage on successful logout
+        alert('Successfully logged out.');
+        window.location.reload(); // Optionally reload the page or redirect to login page.
+      } else {
+        alert('Logout failed.');
+      }
+    } catch (error) {
+      console.error('Error logging out:', error);
+      alert('An error occurred during logout.');
+    }
+  };
+
+  return (
+    <div className="chatbot">
+      <div className="chatbox">
+        <div className="messages">
+          {messages.map((message, index) => (
+            <div key={index} className={`message ${message.role}`}>
+              {message.text}
             </div>
-
-            <h2>Welcome to your USER Dashboard</h2>
-
-            {/* Loading or Error Handling */}
-            {loading ? (
-                <p>Loading patients...</p>
-            ) : error ? (
-                <p>{error}</p>
-            ) : (
-                <>
-                    {patients.length === 0 ? (
-                        <p>No patients assigned</p>
-                    ) : (
-                        <PatientProfiles patients={patients} onPatientClick={handlePatientClick} />
-                    )}
-                </>
-            )}
-
-            {/* Request Patients Button */}
-            <RequestPatientsButton />
-
-            {/* Feedback Form Button */}
-            <Link to="/feedback">
-                <button className="feedback-btn">Provide Feedback</button>
-            </Link>
+          ))}
+          {loading && <div className="message bot">Typing...</div>}
         </div>
-    );
+        <input
+          type="text"
+          value={input}
+          onChange={handleInputChange}
+          placeholder="Type your message..."
+          disabled={loading} // Disable input while waiting for response
+        />
+        <button onClick={handleSendMessage} disabled={loading || !input.trim()}>
+          Send
+        </button>
+        {/* Logout Button */}
+        <button onClick={handleLogout} className="logout-button">
+          Logout
+        </button>
+      </div>
+    </div>
+  );
 }
 
 export default Main;

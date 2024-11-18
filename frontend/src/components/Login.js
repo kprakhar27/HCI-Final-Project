@@ -16,7 +16,16 @@ function LoginPage() {
             if (response.data.role == "caregiver"){
                 navigate('/cgdashboard');
             } else {
-                navigate('/main')
+                const response = await axios.post('http://127.0.0.1:8000/user/checkprofile', { username }, {
+                    headers: {
+                      Authorization: `Bearer ${localStorage.getItem('token')}`
+                    }
+                  });
+                  if (response.data.response == "TRUE") {
+                    navigate('/main')
+                  } else {
+                    navigate('userprofile')
+                  }
             }
         } catch (error) {
             alert('Login failed!');

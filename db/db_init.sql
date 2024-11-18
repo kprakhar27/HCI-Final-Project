@@ -1,5 +1,6 @@
 CREATE DATABASE adapt_ai;
 \c adapt_ai
+
 CREATE TABLE IF NOT EXISTS users (
     id SERIAL PRIMARY KEY,
     username VARCHAR(50) UNIQUE NOT NULL,
@@ -35,10 +36,10 @@ CREATE TABLE IF NOT EXISTS patient (
 	id SERIAL PRIMARY KEY, 
 	name VARCHAR(80) NOT NULL, 
 	age INTEGER NOT NULL, 
-    user_id INTEGER NOT NULL
+    user_id INTEGER NOT NULL UNIQUE,
 	caregiver_id INTEGER, 
 	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY(user_id) REFERENCES users (id)
+    FOREIGN KEY(user_id) REFERENCES users (id),
 	FOREIGN KEY(caregiver_id) REFERENCES caregiver (id)
 );
 
