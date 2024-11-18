@@ -21,7 +21,11 @@ function RegisterPage() {
             });
             setSuccess('Registration successful!');
             setError('');
-            navigate('/cgdashboard');
+            if (role == "caregiver"){
+                navigate('/cgdashboard');
+            } else {
+                navigate('/main')
+            }
         } catch (error) {
             if (error.response && error.response.status === 400) {
                 setError('A user with this username already exists.');
