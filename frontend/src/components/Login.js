@@ -13,7 +13,11 @@ function LoginPage() {
         try {
             const response = await axios.post('http://127.0.0.1:8000/auth/login', { username, password });
             localStorage.setItem('token', response.data.access_token);
-            navigate('/cgdashboard');
+            if (response.data.role == "caregiver"){
+                navigate('/cgdashboard');
+            } else {
+                navigate('/main')
+            }
         } catch (error) {
             alert('Login failed!');
         }

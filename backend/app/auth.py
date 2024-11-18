@@ -62,7 +62,7 @@ def login():
     user.access_token = access_token
     db.session.commit()  # Commit changes to save updated token
 
-    return jsonify(access_token=access_token), 200
+    return jsonify(access_token=access_token, role=user.role), 200
 
 # Logout route - revoke access token and store it in PostgreSQL
 @auth_bp.route('/logout', methods=['POST'])
