@@ -22,8 +22,6 @@ function Main() {
         return;
       }
 
-      console.log()
-
       try {
         const response = await fetch('http://127.0.0.1:8000/auth/validate-token', {
           method: 'GET',
@@ -55,6 +53,8 @@ function Main() {
   const handleInputChange = (e) => {
     setInput(e.target.value);
   };
+
+  
 
   // Handle sending message to LLM API (e.g., OpenAI)
   const handleSendMessage = async () => {
@@ -113,35 +113,43 @@ function Main() {
       alert('An error occurred during logout.');
     }
   };
-
   return (
     <div className="chatbot">
+      {/* Navbar with Logout and Profile buttons */}
+      <div className="navbar">
+        <button onClick={handleLogout} className="navbar-button">Logout</button>
+        <Link to="/profile">
+          <button className="navbar-button">Go to profile</button>
+        </Link>
+        <Link to="/feedback">
+          <button className="navbar-button">Feedback</button>
+        </Link>
+      </div>
+
       <div className="chatbox">
+        {/* Message container */}
         <div className="messages">
           {messages.map((message, index) => (
             <div key={index} className={`message ${message.role}`}>
-              {message.text}
+              <div className="message-text">{message.text}</div>
             </div>
           ))}
-          {loading && <div className="message bot">Typing...</div>}
+          {loading && <div className="message bot"><div className="typing">Typing...</div></div>}
         </div>
-        <input
-          type="text"
-          value={input}
-          onChange={handleInputChange}
-          placeholder="Type your message..."
-          disabled={loading} // Disable input while waiting for response
-        />
-        <button onClick={handleSendMessage} disabled={loading || !input.trim()}>
-          Send
-        </button>
-        {/* Logout Button */}
-        <button onClick={handleLogout} className="logout-button">
-          Logout
-        </button>
+        
+        {/* Input container */}
+        <div className="input-container">
+          <input
+            type="text"
+            value={input}
+            onChange={handleInputChange}
+            placeholder="Type your message..."
+            disabled={loading}
+          />
+          <button onClick={handleSendMessage} disabled={loading || !input.trim()}>Send</button>
+        </div>
       </div>
     </div>
   );
 }
-
 export default Main;

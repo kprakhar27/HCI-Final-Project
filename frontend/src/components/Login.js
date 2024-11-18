@@ -24,7 +24,7 @@ function LoginPage() {
                   if (response.data.response == "TRUE") {
                     navigate('/main')
                   } else {
-                    navigate('userprofile')
+                    navigate('/profile')
                   }
             }
         } catch (error) {

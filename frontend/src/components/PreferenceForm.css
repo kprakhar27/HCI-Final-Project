@@ -1,0 +1,120 @@
+/* General preference form container */
+.preference-form-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #f4f7fc;
+    padding-top: 60px; /* To avoid content getting hidden under the navbar */
+  }
+  
+  /* Navbar container for Logout and Profile buttons */
+  .navbar {
+    width: 100%;
+    display: flex;
+    justify-content: flex-start; /* Align buttons to the left */
+    background-color: #007bff;
+    padding: 10px 20px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  }
+  
+  .navbar-button {
+    background-color: transparent;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    margin-left: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+  }
+  
+  .navbar-button:hover {
+    background-color: #0056b3;
+  }
+  
+  /* Form styling */
+  h2 {
+    margin-top: 80px; /* Adjust content to avoid navbar overlap */
+    text-align: center;
+  }
+  
+  form {
+    width: 100%;
+    max-width: 600px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    margin-top: 20px;
+  }
+  
+  label {
+    display: block;
+    margin-bottom: 10px;
+  }
+  
+  input, select, textarea {
+    width: 96%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 16px;
+  }
+  
+  textarea {
+    resize: vertical;
+    min-height: 80px;
+  }
+  
+  /* Success and error messages */
+  .error {
+    color: red;
+    font-size: 16px;
+  }
+  
+  .success {
+    color: green;
+    font-size: 16px;
+  }
+  
+  /* Button styling */
+  button[type="submit"] {
+    background-color: #007bff;
+    color: white;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 100%;
+    font-size: 18px;
+    transition: background-color 0.3s;
+  }
+  
+  button[type="submit"]:hover {
+    background-color: #0056b3;
+  }
+  
+  /* Feedback button */
+  .feedback-btn {
+    background-color: #28a745;
+    color: white;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 5px;
+    margin-top: 20px;
+    cursor: pointer;
+    font-size: 18px;
+  }
+  
+  .feedback-btn:hover {
+    background-color: #218838;
+  }
+  
