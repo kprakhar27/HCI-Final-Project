@@ -6,7 +6,7 @@ app = create_app()
 
 with app.app_context():
     db.create_all()
-    
+
     # Clear existing data
     db.session.query(Feedback).delete()
     db.session.query(Patient).delete()
@@ -18,15 +18,15 @@ with app.app_context():
     db.session.commit()
 
     # Now add patient and feedback
-    patient = Patient(name='Patient A', age=30, caregiver_id=caregiver.id) 
+    patient = Patient(name='Ward A', age=30, caregiver_id=caregiver.id) 
     db.session.add(patient)
     db.session.commit()  
 
-    patient = Patient(name='Patient B', age=25, caregiver_id=caregiver.id) 
+    patient = Patient(name='Ward B', age=25, caregiver_id=caregiver.id) 
     db.session.add(patient)
     db.session.commit()  
 
-    patient = Patient(name='Patient C', age=32, caregiver_id=caregiver.id) 
+    patient = Patient(name='Ward C', age=32, caregiver_id=caregiver.id) 
     db.session.add(patient)
     db.session.commit()
 
