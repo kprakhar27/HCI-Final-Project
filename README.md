@@ -33,7 +33,7 @@ touch .env
 echo OPENAI_API_KEY=<API-KEY> > .env
 ```
 
-###  Build and Run the Docker Containers
+###  Build and Run the Docker Containers for Database
 
 * Navigate to the root directory of the project where your docker-compose.yml file is located.
 * Run the following command to build and start all services (backend, frontend, and database):
@@ -46,16 +46,44 @@ docker compose build --no-cache
 docker compose up -d
 ```
 This command will:
-* Build all Docker images (Flask backend, React frontend).
+* Build all Docker images for database.
 * Start the containers for:
-    * Flask backend on port 8000
-    * React frontend on port 3000
     * PostgreSQL database on port 5432
     * pgAdmin sql terminal on port 5050
 
+### Run Flask Backend
+
+* Run the following commands to run the flask application in the terminal
+* Make sure to cd into the **backend** directory
+```bash
+# Create virtual environment
+python -m venv ./venv 
+
+# Activate Virtual Environemt
+source venv/bin/activate
+
+# Install Requirements
+pip install -r requirements.txt 
+
+# Run App
+python app.py
+```
+
+### Run React Frontend
+
+* Run the following commands to run the react application in the terminal
+* Make sure to cd into the **frontend** directory
+```bash
+# install npm dependencies
+npm i
+
+# Start react app
+npm start
+```
+
 ### Access the Application
 
-Once all containers are up and running, you can access the application:
+Once all containers and apps are up and running, you can access the application:
 
 - **Frontend (React)**: Open your browser and go to `http://localhost:3000`.
 - **Backend API (Flask)**: The Flask API will be running at `http://localhost:8000`.

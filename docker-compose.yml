@@ -1,16 +1,16 @@
 version: '3.8'
 
 services:
-  backend:
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
-    ports:
-      - "8000:8000"
-    networks:
-      - db
-    depends_on:
-      - db
+  # backend:
+  #   build:
+  #     context: ./backend
+  #     dockerfile: Dockerfile
+  #   ports:
+  #     - "8000:8000"
+  #   networks:
+  #     - db
+  #   depends_on:
+  #     - db
 
   db:
     container_name: db
@@ -45,19 +45,19 @@ services:
       - db
     restart: unless-stopped
 
-  frontend:
-    container_name: adapt-ai
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
-    volumes:
-      - /frontend/node_modules
-      - ./frontend:/frontend
-    ports:
-      - "3000:3000"
-    depends_on:
-      - backend
-    restart: unless-stopped
+  # frontend:
+  #   container_name: adapt-ai
+  #   build:
+  #     context: ./frontend
+  #     dockerfile: Dockerfile
+  #   volumes:
+  #     - /frontend/node_modules
+  #     - ./frontend:/frontend
+  #   ports:
+  #     - "3000:3000"
+  #   depends_on:
+  #     - backend
+  #   restart: unless-stopped
 
 networks:
   db:

@@ -2,6 +2,8 @@ from flask import Blueprint, jsonify, request
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from sqlalchemy import text
 from dotenv import load_dotenv
+import os
+load_dotenv()
 
 from .models import Patient, Feedback, Users
 from . import db
