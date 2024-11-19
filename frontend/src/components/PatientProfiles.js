@@ -41,7 +41,7 @@ function PatientProfiles() {
             'Accessing patient information. Make sure no one else can see your screen. Data protected by HIPAA.'
         );
         if (userConfirmed) {
-            navigate(`/patient/${patientId}`); // Navigate to the patient details page
+            navigate(`/patients/${patientId}`); // Navigate to the patient details page
         }
     };
 
@@ -55,17 +55,15 @@ function PatientProfiles() {
 
     return (
         <div className="patient-container">
-            <h2>Patient List</h2>
+            <h2>Ward List</h2>
             {patients.length === 0 ? (
                 <p>No Patients Assigned</p> // Show this if there are no patients
             ) : (
                 <table className="patient-table">
                     <thead>
                         <tr>
-                            <th>ID</th>
                             <th>Name</th>
                             <th>Age</th>
-                            <th>Caregiver</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -75,13 +73,13 @@ function PatientProfiles() {
                                 onClick={() => handleRowClick(patient.id)} // Handle row click
                                 className="clickable-row"
                             >
-                                <td>{patient.id}</td>
+                                {/* <td>{patient.id}</td> */}
                                 <td>{patient.name}</td>
                                 <td className="secure-age">
                                     <span className="masked">***</span>
                                     <span className="unmasked">{patient.age}</span>
                                 </td>
-                                <td>{patient.caregiver}</td>
+                                {/* <td>{patient.caregiver}</td> */}
                             </tr>
                         ))}
                     </tbody>

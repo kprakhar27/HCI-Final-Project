@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './FeedbackForm.css';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 const FeedbackForm = () => {
     const [feedback, setFeedback] = useState('');
@@ -45,14 +45,9 @@ const FeedbackForm = () => {
     checkTokenValidity();
   }, [navigate]);
 
-    const handleSubmit = async (e) => {
+  const handleSubmit = async (e) => {
         e.preventDefault();
         const token = localStorage.getItem('token');
-
-        if (!token) {
-            setError('User not authenticated.');
-            return;
-        }
 
         try {
             const response = await axios.post(
@@ -64,21 +59,19 @@ const FeedbackForm = () => {
                     },
                 }
             );
+            console.log(response)
             setSuccess('Feedback submitted successfully!');
-            setFeedback(''); // Reset feedback input
-            setTimeout(() => {
-                navigate('/cgdashboard'); // Redirect to dashboard
-            }, 1000);
+            alert(success);
+            setFeedback('');
         } catch (error) {
             setError('Failed to submit feedback.');
+            alert('Failed to submit feedback.');
         }
     };
 
     // Handle logout functionality
   const handleLogout = async () => {
     try {
-      const token = localStorage.getItem('access_token'); // Get access token from localStorage
-
       const response = await fetch('http://127.0.0.1:8000/auth/logout', {
         method: 'POST',
         headers: {
@@ -105,12 +98,13 @@ const FeedbackForm = () => {
             {/* Navbar with Logout and Profile buttons */}
             <div className="navbar">
                 <button onClick={handleLogout} className="navbar-button">Logout</button>
-                <Link to="/main">
+                <button onClick={() => navigate(-1)} className="navbar-button">Back</button>
+                {/* <Link to="/main">
                     <button className="navbar-button">Go to Main</button>
                 </Link>
                 <Link to="/profile">
                     <button className="navbar-button">Go to Profile</button>
-                </Link>
+                </Link> */}
             </div>
 
             <h3>Provide Feedback</h3>

@@ -13,7 +13,7 @@ function LoginPage() {
         try {
             const response = await axios.post('http://127.0.0.1:8000/auth/login', { username, password });
             localStorage.setItem('token', response.data.access_token);
-            if (response.data.role == "caregiver"){
+            if (response.data.role === "caregiver"){
                 navigate('/cgdashboard');
             } else {
                 const response = await axios.post('http://127.0.0.1:8000/user/checkprofile', { username }, {
@@ -25,7 +25,7 @@ function LoginPage() {
                     navigate('/main')
                   } else {
                     navigate('/profile')
-                  }
+                }
             }
         } catch (error) {
             alert('Login failed!');
@@ -35,7 +35,7 @@ function LoginPage() {
     return (
         <div className="login-container">
             <form className="login-form" onSubmit={handleSubmit}>
-                <h2>Welcome Back</h2>
+                <h2>Welcome Back to Adapt.AI</h2>
                 <input
                     type="text"
                     placeholder="Enter Username"

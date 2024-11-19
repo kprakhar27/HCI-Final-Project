@@ -27,6 +27,8 @@ CREATE TABLE IF NOT EXISTS caregiver (
 	id SERIAL PRIMARY KEY, 
 	name VARCHAR(80) NOT NULL, 
 	age INTEGER NOT NULL, 
+    occupation VARCHAR(80),
+    license VARCHAR(80),
 	user_id INTEGER NOT NULL, 
 	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	FOREIGN KEY(user_id) REFERENCES users (id)

@@ -1,23 +1,74 @@
 .patient-details-container {
-    margin: 2rem;
-    padding: 1.5rem;
-    background: #fff;
+    padding: 1rem;
+    background-color: #f9f9f9;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    max-width: 800px;
+    margin: auto;
 }
 
-.patient-details-container h2 {
+h2, h3 {
     text-align: center;
-    color: #2575fc;
-    margin-bottom: 1.5rem;
-}
-
-.patient-details-container p {
-    font-size: 18px;
     color: #333;
-    margin: 0.5rem 0;
 }
 
-.patient-details-container p strong {
-    color: #007bff;
+.plot-section, .session-topics-section {
+    margin: 2rem 0;
+}
+
+
+.back-button {
+    background-color: #2575fc;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-bottom: 20px;  /* Add some space below the button */
+    border-radius: 5px;
+}
+
+.back-button:hover {
+    background-color: #1a61c4;  /* Darker blue on hover */
+}
+
+/* Profile Picture */
+.patient-details-container .profile-pic {
+    width: 500px;        /* Adjusted width */
+    height: 450px;       /* Adjusted height */
+    border-radius: 0%;   /* No rounded corners */
+    object-fit: cover;   /* Proper scaling of the image */
+    border: 2px solid #007bff;  /* Optional blue border */
+}
+
+.time-plot {
+    width: 100%;
+    max-width: 600px;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+}
+
+textarea {
+    width: 100%;
+    height: 100px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 0.5rem;
+    font-size: 1rem;
+}
+
+button {
+    padding: 0.5rem 1rem;
+    background-color: #2575fc;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+}
+
+button:disabled {
+    background-color: #aaa;
+    cursor: not-allowed;
 }

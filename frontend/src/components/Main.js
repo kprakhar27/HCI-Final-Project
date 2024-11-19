@@ -1,12 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import PatientProfiles from './PatientProfiles';
-import FeedbackForm from './Feedback';
-import RequestPatientsButton from './RequestPatients';
 import './Main.css'; 
 import { Link, useNavigate } from 'react-router-dom';
-import PatientDetails from './PatientDetails';
-import profilePic from './images/profilepicture.jpg';
-
 function Main() {
   const [messages, setMessages] = useState([]); // Store conversation history
   const [input, setInput] = useState(''); // Store user input
@@ -36,12 +30,12 @@ function Main() {
           console.log('Token is valid');
         } else {
           // Token is invalid or expired, redirect to login
-          localStorage.removeItem('access_token'); // Clear invalid token
+          localStorage.removeItem('token'); // Clear invalid token
           navigate('/');
         }
       } catch (error) {
         console.error('Error validating token:', error);
-        localStorage.removeItem('access_token'); // Clear invalid token
+        localStorage.removeItem('token'); // Clear invalid token
         navigate('/');
       }
     };
@@ -91,8 +85,6 @@ function Main() {
   // Handle logout functionality
   const handleLogout = async () => {
     try {
-      const token = localStorage.getItem('access_token'); // Get access token from localStorage
-
       const response = await fetch('http://127.0.0.1:8000/auth/logout', {
         method: 'POST',
         headers: {
@@ -114,42 +106,106 @@ function Main() {
     }
   };
   return (
-    <div className="chatbot">
+    <div className="chatbot" style={{ backgroundColor: '#f0f0f5', padding: '20px' }}>
       {/* Navbar with Logout and Profile buttons */}
-      <div className="navbar">
-        <button onClick={handleLogout} className="navbar-button">Logout</button>
-        <Link to="/profile">
-          <button className="navbar-button">Go to profile</button>
+      <div className="navbar" role="navigation" aria-label="Main Navigation">
+        <button
+          onClick={handleLogout}
+          className="navbar-button"
+          aria-label="Log out of your account"
+          title="This will log you out of the chat and return you to the homepage"
+          style={{ marginRight: '10px' }}
+        >
+          Logout
+        </button>
+        
+        <Link to="/profile" aria-label="Go to your profile page">
+          <button
+            className="navbar-button"
+            title="View or edit your personal profile information"
+            style={{ marginRight: '10px' }}
+          >
+            Profile
+          </button>
         </Link>
-        <Link to="/feedback">
-          <button className="navbar-button">Feedback</button>
+  
+        <Link to="/feedback" aria-label="Give feedback about this chatbot">
+          <button
+            className="navbar-button"
+            title="Share your feedback or report issues with the chatbot"
+            style={{ marginRight: '10px' }}
+          >
+            Feedback
+          </button>
         </Link>
       </div>
-
-      <div className="chatbox">
+  
+      <div className="chatbox" role="main" aria-live="polite" style={{ marginTop: '20px' }}>
+        <div className="chat-description" style={{ margin: '15px', color: '#555' }}>
+          <p>
+            <strong>Chat Area:</strong> Messages from you and the chatbot will appear here. Your messages will be on the right, and chatbot responses will be on the left.
+          </p>
+        </div>
+  
         {/* Message container */}
-        <div className="messages">
+        <div className="messages" role="log" aria-label="Chat messages between you and the chatbot">
+          <div className ="chatList">
           {messages.map((message, index) => (
-            <div key={index} className={`message ${message.role}`}>
-              <div className="message-text">{message.text}</div>
+            <div
+              key={index}
+              className={`message ${message.role}`}
+              style={{
+                alignSelf: message.role === 'user' ? 'flex-end' : 'flex-start',
+                backgroundColor: message.role === 'user' ? '#cfe9ff' : '#e2e2e2',
+              }}
+              aria-label={message.role === 'user' ? 'Your message' : 'Chatbot message'}
+            >
+              <div className="message-text" aria-label={message.text}>
+                {message.text}
+              </div>
             </div>
           ))}
-          {loading && <div className="message bot"><div className="typing">Typing...</div></div>}
+          {loading && (
+            <div
+              className="message bot"
+              aria-label="Chatbot is typing a response"
+              style={{ fontStyle: 'italic', color: '#999' }}
+            >
+              <div className="typing">Typing...</div>
+            </div>
+          )}
         </div>
-        
+        </div>
+  
+        <div className="input-description" style={{ margin: '15px', color: '#555' }}>
+          <p>
+            <strong>Type Your Message Below:</strong> Enter your message in the input box and press "Send" when you're ready. The chatbot will respond to each message you send.
+          </p>
+        </div>
+  
         {/* Input container */}
         <div className="input-container">
           <input
             type="text"
             value={input}
             onChange={handleInputChange}
-            placeholder="Type your message..."
+            placeholder="Type your message here..."
             disabled={loading}
+            aria-label="Input field to type your message to the chatbot"
+            title="Type your message to the chatbot here"
           />
-          <button onClick={handleSendMessage} disabled={loading || !input.trim()}>Send</button>
+          <button
+            onClick={handleSendMessage}
+            disabled={loading || !input.trim()}
+            aria-label="Send message to chatbot"
+            title="Click to send your message to the chatbot"
+          >
+            Send
+          </button>
         </div>
       </div>
     </div>
   );
-}
+  
+}  
 export default Main;

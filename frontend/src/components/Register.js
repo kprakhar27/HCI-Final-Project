@@ -19,12 +19,22 @@ function RegisterPage() {
                 password,
                 role,
             });
+            console.log(response)
             setSuccess('Registration successful!');
             setError('');
-            if (role == "caregiver"){
-                navigate('/cgdashboard');
+            if (role === "caregiver"){
+                navigate('/cgprofile');
             } else {
-                navigate('/main')
+                const response = await axios.post('http://127.0.0.1:8000/user/checkprofile', { username }, {
+                    headers: {
+                      Authorization: `Bearer ${localStorage.getItem('token')}`
+                    }
+                });
+                if (response.data.response === "TRUE") {
+                    navigate('/main')
+                } else {
+                    navigate('/profile')
+                }
             }
         } catch (error) {
             if (error.response && error.response.status === 400) {
@@ -36,45 +46,41 @@ function RegisterPage() {
         }
     };
 
-    // Handle "Back to Login" button click
-    const handleGoBack = () => {
-        navigate('/'); // Navigate back to login page
-    };
-
     return (
         <div className="register-container">
-            <h2>Register</h2>
-            <form onSubmit={handleSubmit}>
+            <form className="register-form" onSubmit={handleSubmit}>
+                <h2>Register for Adapt.AI</h2>
                 {error && <p className="error">{error}</p>}
                 {success && <p className="success">{success}</p>}
+                
                 <input
                     type="text"
-                    placeholder="Username"
+                    placeholder="Enter Username"
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
                     required
                 />
                 <input
                     type="password"
-                    placeholder="Password"
+                    placeholder="Enter Password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
                 />
-                <input
-                    type="text"
-                    placeholder="Role (e.g., Caregiver)"
+                <select
                     value={role}
                     onChange={(e) => setRole(e.target.value)}
                     required
-                />
+                >
+                    <option value="" disabled>Select Role</option>
+                    <option value="caregiver">Caregiver</option>
+                    <option value="user">User</option>
+                </select>
                 <button type="submit">Register</button>
+                <p>Already have an account? <a href="/">Login</a></p>
             </form>
-            <button className="back-to-login" onClick={handleGoBack}>
-                Back to Login
-            </button>
         </div>
     );
-};
+}    
 
 export default RegisterPage;

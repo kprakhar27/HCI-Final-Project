@@ -1,6 +1,8 @@
 from .models import RevokedToken
 from . import db
 
+# Create fuctions to revoke jwt tokns which will help in logout
+
 def add_token_to_blocklist(jti):
     """
     Adds the token's unique identifier (JTI) to the revoked tokens table.

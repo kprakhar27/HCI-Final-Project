@@ -39,6 +39,7 @@
   background-color: #0056b3;
 }
 
+
 /* Main chatbox styling */
 .chatbox {
   width: 100%;
@@ -55,11 +56,21 @@
 
 /* Message container */
 .messages {
-  flex: 1;
+  display: flex;
+  
   padding: 20px;
   overflow-y: auto;
   background-color: #f9f9f9;
   border-bottom: 2px solid #f1f1f1;
+}
+
+
+.chatList {
+  display: flex;
+  flex-flow: column;
+  width: 100%;
+  height: fit-content;
+  padding-bottom: 100%;
 }
 
 /* Single message styling */
@@ -71,12 +82,14 @@
 }
 
 .message.user {
+  justify-content: flex-end;
   background-color: #e1f5fe;
   align-self: flex-end;
   text-align: right;
 }
 
 .message.bot {
+  justify-content: flex-start;
   background-color: #f1f8e9;
   align-self: flex-start;
   text-align: left;
@@ -103,6 +116,8 @@
   border: 1px solid #ddd;
   border-radius: 20px;
   font-size: 16px;
+  margin-bottom: 0px;
+  margin-right: 10px;
   outline: none;
   transition: border-color 0.3s ease;
 }
@@ -112,7 +127,7 @@
 }
 
 .input-container button {
-  margin-left: 10px;
+  margin: 10px;
   padding: 10px 15px;
   background-color: #007bff;
   color: #fff;

@@ -1,5 +1,7 @@
 from . import db
 
+# define the database tables to use in the backend apis
+
 class Users(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
@@ -19,6 +21,8 @@ class Caregiver(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80), nullable=False)
     age = db.Column(db.Integer, nullable=False)
+    occupation = db.Column(db.String(80), nullable=True)
+    license = db.Column(db.String(80), nullable=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     created_at = db.Column(db.TIMESTAMP, default=db.func.current_timestamp())
 

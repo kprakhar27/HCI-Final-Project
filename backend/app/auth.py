@@ -9,6 +9,7 @@ from .revoked_tokens import add_token_to_blocklist
 
 auth_bp = Blueprint('auth', __name__)
 
+# Test Route
 @auth_bp.route('/', methods=['GET'])
 def hello():
     return jsonify({'message': 'Hello World'}), 200
@@ -103,14 +104,7 @@ def get_patients():
     for row in result:
         patients_list.append(row._asdict())
 
-    # if caregiver:
-    #     # Fetch patients assigned to the caregiver
-    #     patients = Patient.query.filter_by(caregiver_id=caregiver.id).all()
-    #     patients_list = [{'id': patient.id, 'name': patient.name, 'age': patient.age} for patient in patients]
-
     return jsonify(patients_list), 200
-    # else:
-    #     return jsonify({'message': 'Caregiver not found'}), 404
 
 
 @auth_bp.route('/add_patient', methods=['POST'])
@@ -141,21 +135,23 @@ def add_patient():
 @auth_bp.route('/feedback', methods=['POST'])
 @jwt_required()
 def give_feedback():
-    current_user = get_jwt_identity()
-    caregiver = Users.query.filter_by(username=current_user['username']).first()
-
-    if caregiver:
+    try:
+        current_user = get_jwt_identity()
+    
         data = request.get_json()
         feedback_text = data.get('feedback_text')
+        
+        user = Users.query.filter_by(username=current_user['username']).first()
+        
 
         if not feedback_text:
             return jsonify({'message': 'Feedback text is required'}), 400
-
+        
         # Create the feedback entry
-        feedback = Feedback(caregiver_id=caregiver.id, feedback_text=feedback_text)
+        feedback = Feedback(user_id=user.id, feedback_text=feedback_text)
         db.session.add(feedback)
         db.session.commit()
 
         return jsonify({'message': 'Feedback submitted successfully'}), 200
-
-    return jsonify({'message': 'Unauthorized'}), 403
+    except Exception as e:
+        return jsonify({'message': 'Unauthorized', 'error':str(e)}), 403

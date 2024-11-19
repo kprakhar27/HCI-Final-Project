@@ -12,6 +12,7 @@ function PreferenceForm() {
     const [isDiagnosed, setIsDiagnosed] = useState('');
     const [caregiverUsername, setCaregiverUsername] = useState('');
     const [level, setLevel] = useState('');
+    const [status, setStatus] = useState('notexist');
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
     const navigate = useNavigate();
@@ -45,48 +46,104 @@ function PreferenceForm() {
             }
         };
 
+        const setDefaultValues = async () => {
+            try {
+                const response = await fetch('http://127.0.0.1:8000/user/getprofile', {
+                    method: 'GET',
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem('token')}`,
+                        'Content-Type': 'application/json',
+                    },
+                });
+                const data = await response.json();
+                if (data.status==="success") {
+                    setStatus("success");
+                    setName(data.name);
+                    setAge(data.age);
+                    setOccupation(data.occupation)
+                    setTopic(data.topic);
+                    setDisorderDetails(data.disorder_details);
+                    setIsDiagnosed(data.is_diagnosed);
+                    setCaregiverUsername(data.cg_name);
+                    setLevel(data.level);
+                }
+            } catch (error) {
+                console.error('Error getting profile', error);
+            }
+        };
+
+        setDefaultValues();
         checkTokenValidity();
     }, [navigate]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        try {
-            const response = await axios.post('http://127.0.0.1:8000/user/addprofile', {
-                name,
-                age,
-                occupation,
-                topic,
-                disorderDetails,
-                isDiagnosed,
-                level,
-                caregiverUsername,
-            }, {
-                headers: {
-                  Authorization: `Bearer ${localStorage.getItem('token')}`
+        if (status !== "success"){
+            try {
+                const response = await axios.post('http://127.0.0.1:8000/user/addprofile', {
+                    name,
+                    age,
+                    occupation,
+                    topic,
+                    disorderDetails,
+                    isDiagnosed,
+                    level,
+                    caregiverUsername,
+                }, {
+                    headers: {
+                    Authorization: `Bearer ${localStorage.getItem('token')}`
+                    }
+                });
+
+                if (response.data.status === "success") {
+                setSuccess('Preferences saved successfully!');
+                setError('');
+                alert('Successfully saved profile');
+                navigate('/main'); // Optionally reload the page or redirect to login page.
+                } 
+                else {
+                alert('Could not save preferences.');
                 }
-            });
-
-            if (response.ok) {
-              setSuccess('Preferences saved successfully!');
-              setError('');
-              navigate('/main'); // Optionally reload the page or redirect to login page.
-            } 
-            else {
-              alert('Logout failed.');
+            } catch (error) {
+                setError('Failed to save preferences. Please try again.');
+                setSuccess('');
             }
+        } else {
+            try {
+                const response = await axios.post('http://127.0.0.1:8000/user/updateprofile', {
+                    name,
+                    age,
+                    occupation,
+                    topic,
+                    disorderDetails,
+                    isDiagnosed,
+                    level,
+                    caregiverUsername,
+                }, {
+                    headers: {
+                    Authorization: `Bearer ${localStorage.getItem('token')}`
+                    }
+                });
 
-             // Redirect to the patient dashboard
-        } catch (error) {
-            setError('Failed to save preferences. Please try again.');
-            setSuccess('');
+                if (response.data.status === "success") {
+                setSuccess('Preferences updated successfully!');
+                setError('');
+                alert('Successfully updated profile');
+                navigate('/profile'); // Optionally reload the page or redirect to login page.
+                } 
+                else {
+                alert('Could not update preferences.');
+                }
+            } catch (error) {
+                setError('Failed to update preferences. Please try again.');
+                setSuccess('');
+            }
         }
     };
 
     // Handle logout functionality
     const handleLogout = async () => {
         try {
-            const token = localStorage.getItem('access_token'); // Get access token from localStorage
-
             const response = await fetch('http://127.0.0.1:8000/auth/logout', {
                 method: 'POST',
                 headers: {
@@ -112,7 +169,7 @@ function PreferenceForm() {
           {/* Navbar with Logout and Profile buttons */}
           <div className="navbar">
               <button onClick={handleLogout} className="navbar-button">Logout</button>
-              <Link to="/profile">
+              <Link to="/main">
                   <button className="navbar-button">Go to Chat</button>
               </Link>
               <Link to="/feedback">
@@ -162,7 +219,7 @@ function PreferenceForm() {
                       onChange={(e) => setTopic(e.target.value)}
                       required
                   >
-                      <option value="">Select</option>
+                      <option value={topic}>{topic}</option>
                       <option value="just_use">I would like to just use it</option>
                       <option value="daily_planning">Daily planning</option>
                       <option value="health">Health (physical/mental)</option>
@@ -191,9 +248,8 @@ function PreferenceForm() {
                       onChange={(e) => setIsDiagnosed(e.target.value)}
                       required
                   >
-                      <option value="">Select</option>
+                      <option value={isDiagnosed}>{isDiagnosed}</option>
                       <option value="yes">Yes</option>
-                      <option value="no">No</option>
                   </select>
               </label>
 
@@ -213,7 +269,7 @@ function PreferenceForm() {
                       value={level}
                       onChange={(e) => setLevel(e.target.value)}
                   >
-                      <option value="">Select</option>
+                      <option value={level}>{level}</option>
                       <option value="1">Level 1</option>
                       <option value="2">Level 2</option>
                       <option value="3">Level 3</option>
