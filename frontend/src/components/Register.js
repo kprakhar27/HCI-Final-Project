@@ -20,16 +20,19 @@ function RegisterPage() {
                 role,
             });
             console.log(response)
+            localStorage.setItem('token', response.data.token);
+            console.log(localStorage.getItem('token'))
             setSuccess('Registration successful!');
             setError('');
-            if (role === "caregiver"){
+            if (role === "caregiver") {
                 navigate('/cgprofile');
             } else {
                 const response = await axios.post('http://127.0.0.1:8000/user/checkprofile', { username }, {
                     headers: {
-                      Authorization: `Bearer ${localStorage.getItem('token')}`
+                        Authorization: `Bearer ${localStorage.getItem('token')}`
                     }
                 });
+                console.log(response)
                 if (response.data.response === "TRUE") {
                     navigate('/main')
                 } else {
@@ -52,7 +55,7 @@ function RegisterPage() {
                 <h2>Register for Adapt.AI</h2>
                 {error && <p className="error">{error}</p>}
                 {success && <p className="success">{success}</p>}
-                
+
                 <input
                     type="text"
                     placeholder="Enter Username"
@@ -81,6 +84,6 @@ function RegisterPage() {
             </form>
         </div>
     );
-}    
+}
 
 export default RegisterPage;
