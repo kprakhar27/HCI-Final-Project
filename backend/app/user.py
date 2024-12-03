@@ -96,17 +96,17 @@ def llm_response():
         new_message = Messages(user_id=user.id, content=input, origin="user")
         db.session.add(new_message)
         db.session.commit()
-        
+
         feedback = Feedback.query.filter_by(user_id=user.id)
-        
+
         feedback_text = ""
-        
+
         for i in feedback:
             feedback_text = feedback_text + i.feedback_text + ", "
-        
+
         if feedback_text == "":
             feedback_text = "No Feedback"
-        
+
         print(feedback_text)
 
         context_message = f"""You are a supportive and detail-oriented conversational 
@@ -158,7 +158,6 @@ def llm_response():
         message_list.append(context)
 
         payload = {"model": "gpt-3.5-turbo", "messages": message_list[::-1]}
-
 
         response = requests.post(OPENAI_API_URL, json=payload, headers=headers)
         # write llm code
@@ -445,3 +444,35 @@ def delete_profile():
             "status": "fail",
         }
         return jsonify(response), 400
+
+
+@user_bp.route("/messages_per_interval/<patient_id>", methods=["GET"])
+@jwt_required()
+def messages_per_interval(patient_id):
+    try:
+        # Get the patient messages within 5-minute intervals
+        patient = Patient.query.filter_by(id=patient_id).first()
+
+        query = f"""
+        SELECT
+                DATE_TRUNC('minute', timestamp) + INTERVAL '5 minute' * (EXTRACT(minute FROM timestamp)::int / 5) AS interval_start,
+                COUNT(*) AS message_count
+            FROM messages
+            WHERE user_id = '{patient.user_id}'
+            GROUP BY interval_start
+            ORDER BY interval_start;
+		"""
+
+        with db.engine.connect() as conn:
+            result = conn.execute(text(query))
+
+        # Format the result into a list of intervals and counts
+        message_data = [
+            {"interval": row[0].strftime("%Y-%m-%d %H:%M:%S"), "count": row[1]}
+            for row in result
+        ]
+
+        return jsonify({"status": "success", "data": message_data}), 200
+
+    except Exception as e:
+        return jsonify({"error": str(e), "status": "fail"}), 400

@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import './PatientDetails.css';
 import defaultMetric from './images/metrics.jpg';
+import { Bar } from 'react-chartjs-2';
+import Chart from 'chart.js/auto';
 
 function PatientDetails() {
     const { patientId } = useParams();
@@ -10,6 +12,7 @@ function PatientDetails() {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [messageData, setMessageData] = useState([]);
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     useEffect(() => {
@@ -36,7 +39,31 @@ function PatientDetails() {
             }
         };
 
+        const fetchMessageData = async () => {
+            try {
+                const response = await fetch(`http://127.0.0.1:8000/user/messages_per_interval/${window.location.pathname.split("/")[2]}`, {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem('token')}`,
+                    },
+                });
+                console.info(response);
+
+                if (!response.ok) {
+                    throw new Error('Failed to fetch message data');
+                }
+
+                const data = await response.json();
+                if (data.status === 'success') {
+                    setMessageData(data.data);
+                }
+            } catch (error) {
+                setError('Failed to load message data');
+            }
+        };
+
+
         fetchPatientData();
+        fetchMessageData();
     }, [patientId]);
 
 
@@ -71,6 +98,76 @@ function PatientDetails() {
     if (loading) return <p>Loading patient details...</p>;
     if (error) return <p>{error}</p>;
 
+    const chartData = {
+        labels: messageData.map((entry) => entry.interval),
+        datasets: [
+            {
+                label: 'Messages per 5-minute Interval',
+                data: messageData.map((entry) => entry.count),
+                backgroundColor: 'rgba(75, 192, 192, 0.6)', // Lighter shade
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 1,
+                borderRadius: 10,  // Rounded corners for bars
+                hoverBackgroundColor: 'rgba(75, 192, 192, 0.8)',  // Hover effect
+                hoverBorderColor: 'rgba(75, 192, 192, 1)',
+            },
+        ],
+    };
+
+    const chartOptions = {
+        responsive: true,
+        plugins: {
+            legend: {
+                position: 'top',
+                labels: {
+                    font: {
+                        size: 14,
+                        family: 'Arial, sans-serif',
+                        weight: 'bold',
+                    },
+                    color: '#333',
+                },
+            },
+            tooltip: {
+                backgroundColor: 'rgba(0,0,0,0.8)',  // Dark tooltip background
+                titleFont: {
+                    weight: 'bold',
+                },
+                bodyFont: {
+                    size: 14,
+                },
+            },
+        },
+        scales: {
+            x: {
+                grid: {
+                    display: true, // Show grid lines for X-axis
+                    color: '#e0e0e0', // Light grid color
+                },
+                ticks: {
+                    font: {
+                        size: 12,
+                        family: 'Arial, sans-serif',
+                    },
+                    color: '#333',
+                },
+            },
+            y: {
+                grid: {
+                    display: true,  // Show grid lines for Y-axis
+                    color: '#e0e0e0', // Light grid color
+                },
+                ticks: {
+                    font: {
+                        size: 12,
+                        family: 'Arial, sans-serif',
+                    },
+                    color: '#333',
+                },
+            },
+        },
+    };
+
     return (
         <div className="patient-details-container">
             {/* Back Button */}
@@ -86,7 +183,9 @@ function PatientDetails() {
             {/* Time Spent Plot Section */}
             <div className="plot-section">
                 <h3>Time Spent on Tool</h3>
-                <img src={defaultMetric} alt="Profile" className="profile-pic" />
+                {/* <img src={defaultMetric} alt="Profile" className="profile-pic" /> */}
+                {/* Render the Bar Chart */}
+                <Bar data={chartData} options={chartOptions} />
             </div>
 
             {/* Session Topics Section */}
