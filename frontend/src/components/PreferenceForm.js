@@ -311,40 +311,41 @@ function PreferenceForm() {
                     />
                 </label>
 
-                <label>
-                    Anything specific you want to talk about?
-                    <select
-                        value={topic}
-                        onChange={(e) => setTopic(e.target.value)}
-                        required
-                    >
-                        <option value={topic}>{topic}</option>
-                        <option value="Nothing in particular">Nothing in particular</option>
-                        <option value="daily planning">Daily planning</option>
-                        <option value="health">Health (physical/mental)</option>
-                        <option value="grooming">Grooming</option>
-                        <option value="household chores">Household chores</option>
-                        <option value="financial management">Financial management</option>
-                        <option value="work study">Work or study</option>
-                        <option value="job evaluation">Job evaluation criteria</option>
-                        <option value="social relationships">Social relationships and communication</option>
-                        <option value="small talk">Small talk</option>
-                    </select>
-                </label>
+              <label>
+                  Anything specific you want to talk about?
+                  <select
+                      value={topic}
+                      onChange={(e) => setTopic(e.target.value)}
+                      required
+                  >
+                      <option value={topic}>{topic}</option>
+                      <option value="Nothing in particular">Nothing in particular</option>
+                      <option value="Daily planning">Daily planning</option>
+                      <option value="Health (physical/mental)">Health (physical/mental)</option>
+                      <option value="Grooming">Grooming</option>
+                      <option value="Household Chores">Household chores</option>
+                      <option value="Financial Management">Financial management</option>
+                      <option value="Work Study">Work or study</option>
+                      {/* <option value="Job Evaluation">Job evaluation criteria</option> */}
+                      <option value="Social Relationships">Social relationships and communication</option>
+                      <option value="Small Talk">Small talk</option>
+                  </select>
+              </label>
 
 
 
-                <label>
-                    Are you diagnosed?
-                    <select
-                        value={isDiagnosed}
-                        onChange={(e) => setIsDiagnosed(e.target.value)}
-                        required
-                    >
-                        <option value={isDiagnosed}>{isDiagnosed}</option>
-                        <option value="yes">Yes</option>
-                    </select>
-                </label>
+              <label>
+                  Do you have a medical diagnosis for some special needs?
+                  <select
+                      value={isDiagnosed}
+                      onChange={(e) => setIsDiagnosed(e.target.value)}
+                      required
+                  >
+                      <option value={isDiagnosed}>{isDiagnosed}</option>
+                      <option value="Yes">Yes</option>
+                      <option value="No">No</option>
+                  </select>
+              </label>
 
                 <label>
                     Anything you would like the AI assistant to make note of?

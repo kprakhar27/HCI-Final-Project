@@ -96,6 +96,18 @@ def llm_response():
         new_message = Messages(user_id=user.id, content=input, origin="user")
         db.session.add(new_message)
         db.session.commit()
+        
+        feedback = Feedback.query.filter_by(user_id=user.id)
+        
+        feedback_text = ""
+        
+        for i in feedback:
+            feedback_text = feedback_text + i.feedback_text + ", "
+        
+        if feedback_text == "":
+            feedback_text = "No Feedback"
+        
+        print(feedback_text)
 
         context_message = f"""You are a supportive and detail-oriented conversational 
         assistant designed to interact with individuals on the autism spectrum. 
@@ -123,6 +135,8 @@ def llm_response():
         you might respond with, "Did you know that the world’s fastest train is 
         the Shanghai Maglev, which can reach speeds of 267 miles per hour?"
         
+        Some of the feedback which you should keep in mind based on previous interaction with user: {feedback_text}
+        
         Some of the preffered topics for the user are {patient.topic}.
         The user has requested you to answer any question in a {patient.level} way.
         The user has shared the following details about himself: {patient.disorder_details}.
@@ -142,6 +156,7 @@ def llm_response():
             message_list.append({"role": message.origin, "content": message.content})
 
         message_list.append(context)
+<<<<<<< Updated upstream
 
         print(message_list[::-1])
 
@@ -149,6 +164,14 @@ def llm_response():
 
         print(payload)
 
+=======
+        
+        payload = {
+            "model": "gpt-3.5-turbo",
+            "messages": message_list[::-1]
+        }
+                
+>>>>>>> Stashed changes
         response = requests.post(OPENAI_API_URL, json=payload, headers=headers)
         # write llm code
         if response.status_code == 200:
