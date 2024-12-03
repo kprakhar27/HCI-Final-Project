@@ -16,6 +16,57 @@ function PreferenceForm() {
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
     const navigate = useNavigate();
+    const [theme, setTheme] = useState("light");
+    const [fontSize, setFontSize] = useState(16);
+
+
+    useEffect(() => {
+        window.addEventListener('keydown', handleKeyDown);
+        return () => {
+          window.removeEventListener('keydown', handleKeyDown);
+        };
+      });
+
+      
+    // Keyboard Navigation
+  const handleKeyDown = (event) => {
+
+    if (event.ctrlKey && event.key === 't') {
+      event.preventDefault();
+      setTheme(theme === 'light' ? 'dark' : 'light');
+    }
+
+    if (event.ctrlKey && event.key === '-') {
+      event.preventDefault();
+      setFontSize(Math.max(12, fontSize - 2));
+    }
+
+    if (event.ctrlKey && event.key === '=') {
+      event.preventDefault();
+      setFontSize(Math.min(24, fontSize + 2));
+    }
+
+    if (event.ctrlKey && event.key === 'f') {
+      event.preventDefault();
+      navigate('/feedback');
+    }
+
+    if (event.ctrlKey && event.key === 'm') {
+      event.preventDefault();
+      navigate('/main');
+    }
+
+    if (event.ctrlKey && event.key === 'l') {
+      event.preventDefault();
+      handleLogout();
+    }
+  };
+
+     // Accessibility: Theme and Font Size Management
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme);
+    document.documentElement.style.fontSize = `${fontSize}px`;
+  }, [theme, fontSize]);
 
     // Check if token is valid on component load
     useEffect(() => {
@@ -175,6 +226,27 @@ function PreferenceForm() {
               <Link to="/feedback">
                   <button className="navbar-button">Feedback</button>
               </Link>
+              <button 
+            onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
+            aria-label="Toggle Dark Mode"
+          >
+            {theme === 'light' ? '🌙' : '☀️'}
+        </button>
+
+          <div className="font-controls">
+            <button 
+              onClick={() => setFontSize(Math.max(12, fontSize - 2))}
+              aria-label="Decrease Text Size"
+            >
+              A-
+            </button>
+            <button 
+              onClick={() => setFontSize(Math.min(24, fontSize + 2))}
+              aria-label="Increase Text Size"
+            >
+              A+
+            </button>
+          </div>
           </div>
 
           <h2>Set Your Preferences</h2>
@@ -263,7 +335,7 @@ function PreferenceForm() {
                   />
               </label>
 
-              <label>
+              {/* <label>
                   Level of severity:
                   <select
                       value={level}
@@ -274,7 +346,7 @@ function PreferenceForm() {
                       <option value="2">Level 2</option>
                       <option value="3">Level 3</option>
                   </select>
-              </label>
+              </label> */}
 
               <button type="submit">Save Preferences</button>
           </form>

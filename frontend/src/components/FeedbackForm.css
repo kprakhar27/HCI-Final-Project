@@ -1,10 +1,33 @@
+:root {
+  --bg-primary: #f4f4f4;
+  --bg-secondary: #ffffff;
+  --text-primary: #333333;
+  --accent-color: #4a90e2;
+  --user-bubble: #e6f2ff;
+  --assistant-bubble: #f0f0f0;
+  --transition-speed: 0.2s;
+  --nav-color: #097df1;
+  --text-secondary:#333333;
+}
+
+[data-theme='dark'] {
+  --bg-primary: #1e1e1e; /* Dark background for body */
+  --bg-secondary: #2a2a2a; /* Slightly lighter background for containers */
+  --text-primary: #e4e4e4; /* Light text for readability */
+  --accent-color: #4a90e2; /* Accent color for interactive elements */
+  --user-bubble: #005f99; /* Darker blue for user bubbles */
+  --assistant-bubble: #535353; /* Neutral gray for chatbot bubbles */
+  --nav-color: #002f5d; /* Deep blue for navigation */
+  --text-secondary: #f8f5f5;
+}
+
 /* General feedback container styling */
 .feedback-container {
     display: flex;
     flex-direction: column;
     align-items: center;
     min-height: 100vh;
-    background-color: #f4f7fc;
+    background-color: var(--bg-secondary);
     padding-top: 60px; /* To avoid content being hidden under navbar */
   }
   

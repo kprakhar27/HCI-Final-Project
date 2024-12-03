@@ -10,8 +10,19 @@ function CGDashboard() {
     // const [input, setInput] = useState('');
     // const [messages, setMessages] = useState([]);
     const [error, setError] = useState(null);
+    const [theme, setTheme] = useState("light");
+  const [fontSize, setFontSize] = useState(16);
     const navigate = useNavigate();
 
+
+    // Accessibility: Theme and Font Size Management
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme);
+    document.documentElement.style.fontSize = `${fontSize}px`;
+  }, [theme, fontSize]);
+
+
+  
     useEffect(() => {
         const checkTokenValidity = async () => {
           const token = localStorage.getItem('token');
@@ -135,6 +146,28 @@ function CGDashboard() {
             Feedback
           </button>
         </Link>
+
+        <button 
+            onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
+            aria-label="Toggle Dark Mode"
+          >
+            {theme === 'light' ? '🌙' : '☀️'}
+        </button>
+
+          <div className="font-controls">
+            <button 
+              onClick={() => setFontSize(Math.max(12, fontSize - 2))}
+              aria-label="Decrease Text Size"
+            >
+              A-
+            </button>
+            <button 
+              onClick={() => setFontSize(Math.min(24, fontSize + 2))}
+              aria-label="Increase Text Size"
+            >
+              A+
+            </button>
+          </div>
       </div>
 
             <h2>Welcome to your Dashboard</h2>

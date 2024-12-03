@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import './Main.css'; 
 import { Link, useNavigate } from 'react-router-dom';
 function Main() {
@@ -6,6 +6,11 @@ function Main() {
   const [input, setInput] = useState(''); // Store user input
   const [loading, setLoading] = useState(false); // Handle loading state
   const navigate = useNavigate();
+  const [theme, setTheme] = useState("light");
+  const [fontSize, setFontSize] = useState(16);
+  const messagesEndRef = useRef(null);
+  // const [transcript, setTranscript] = useState("");
+  
 
   // Check if token is valid on component load
   useEffect(() => {
@@ -43,19 +48,90 @@ function Main() {
     checkTokenValidity();
   }, [navigate]);
 
+  // Accessibility: Scroll to bottom of messages
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  // Accessibility: Theme and Font Size Management
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme);
+    document.documentElement.style.fontSize = `${fontSize}px`;
+  }, [theme, fontSize]);
+
+  // Keyboard Navigation
+  const handleKeyDown = (event) => {
+    
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      handleSendMessage();
+    }
+
+    if (event.ctrlKey && event.key === 't') {
+      event.preventDefault();
+      setTheme(theme === 'light' ? 'dark' : 'light');
+    }
+
+    if (event.ctrlKey && event.key === '-') {
+      event.preventDefault();
+      setFontSize(Math.max(12, fontSize - 2));
+    }
+
+    if (event.ctrlKey && event.key === '=') {
+      event.preventDefault();
+      setFontSize(Math.min(24, fontSize + 2));
+    }
+
+    if (event.ctrlKey && event.key === 'f') {
+      event.preventDefault();
+      navigate('/feedback');
+    }
+
+    if (event.ctrlKey && event.key === 'p') {
+      event.preventDefault();
+      navigate('/profile');
+    }
+
+    if (event.ctrlKey && event.key === 'l') {
+      event.preventDefault();
+      handleLogout();
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  });
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
+
+
   // Handle input field changes
   const handleInputChange = (e) => {
     setInput(e.target.value);
   };
 
-  
+  const addMessage = (role, content) => {
+    setMessages(prev => [...prev, { 
+      id: Date.now(), 
+      role, 
+      content,
+      timestamp: new Date().toLocaleTimeString() 
+    }]);
+  };
 
   // Handle sending message to LLM API (e.g., OpenAI)
   const handleSendMessage = async () => {
     if (!input.trim()) return; // Prevent sending empty messages
 
-    const userMessage = { role: 'user', text: input };
-    setMessages((prevMessages) => [...prevMessages, userMessage]); // Add user message to chat
+    addMessage("user", input)
+
+    // const userMessage = { role: 'user', text: input };
+    // setMessages((prevMessages) => [...prevMessages, userMessage]); // Add user message to chat
 
     setLoading(true); // Start loading state while waiting for response
     setInput(''); // Clear input field
@@ -71,12 +147,12 @@ function Main() {
       });
 
       const data = await response.json();
-      const botMessage = { role: 'bot', text: data.response }; // Assume API returns { response: "..." }
-      setMessages((prevMessages) => [...prevMessages, botMessage]); // Add bot response to chat
+      const llmResponse = data.response;
+      addMessage("assistant", llmResponse);
     } catch (error) {
       console.error('Error fetching LLM response:', error);
-      const errorMessage = { role: 'bot', text: "Sorry, I couldn't process that." };
-      setMessages((prevMessages) => [...prevMessages, errorMessage]);
+      const errorMessage = "Sorry, I couldn't process that.";
+      addMessage("assistant", errorMessage);
     } finally {
       setLoading(false); // Stop loading state after response is received
     }
@@ -106,9 +182,9 @@ function Main() {
     }
   };
   return (
-    <div className="chatbot" style={{ backgroundColor: '#f0f0f5', padding: '20px' }}>
+    <div className="chatbot">
       {/* Navbar with Logout and Profile buttons */}
-      <div className="navbar" role="navigation" aria-label="Main Navigation">
+      <div className="navbar">
         <button
           onClick={handleLogout}
           className="navbar-button"
@@ -138,10 +214,32 @@ function Main() {
             Feedback
           </button>
         </Link>
+
+        <button 
+            onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
+            aria-label="Toggle Dark Mode"
+          >
+            {theme === 'light' ? '🌙' : '☀️'}
+        </button>
+
+          <div className="font-controls">
+            <button 
+              onClick={() => setFontSize(Math.max(12, fontSize - 2))}
+              aria-label="Decrease Text Size"
+            >
+              A-
+            </button>
+            <button 
+              onClick={() => setFontSize(Math.min(24, fontSize + 2))}
+              aria-label="Increase Text Size"
+            >
+              A+
+            </button>
+          </div>
       </div>
   
       <div className="chatbox" role="main" aria-live="polite" style={{ marginTop: '20px' }}>
-        <div className="chat-description" style={{ margin: '15px', color: '#555' }}>
+        <div className="chat-description">
           <p>
             <strong>Chat Area:</strong> Messages from you and the chatbot will appear here. Your messages will be on the right, and chatbot responses will be on the left.
           </p>
@@ -150,18 +248,15 @@ function Main() {
         {/* Message container */}
         <div className="messages" role="log" aria-label="Chat messages between you and the chatbot">
           <div className ="chatList">
-          {messages.map((message, index) => (
+          {messages.map((message) => (
             <div
-              key={index}
+              key={message.id}
               className={`message ${message.role}`}
-              style={{
-                alignSelf: message.role === 'user' ? 'flex-end' : 'flex-start',
-                backgroundColor: message.role === 'user' ? '#cfe9ff' : '#e2e2e2',
-              }}
               aria-label={message.role === 'user' ? 'Your message' : 'Chatbot message'}
             >
-              <div className="message-text" aria-label={message.text}>
-                {message.text}
+              <div className="message-text" aria-label={message.content}>
+                {message.content}
+                <span className="message-timestamp">{message.timestamp}</span>
               </div>
             </div>
           ))}
@@ -174,10 +269,11 @@ function Main() {
               <div className="typing">Typing...</div>
             </div>
           )}
+          <div ref={messagesEndRef} />
         </div>
         </div>
   
-        <div className="input-description" style={{ margin: '15px', color: '#555' }}>
+        <div className="input-description">
           <p>
             <strong>Type Your Message Below:</strong> Enter your message in the input box and press "Send" when you're ready. The chatbot will respond to each message you send.
           </p>

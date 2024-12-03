@@ -8,7 +8,52 @@ const FeedbackForm = () => {
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
     const navigate = useNavigate();
+    const [theme, setTheme] = useState("light");
+    const [fontSize, setFontSize] = useState(16);
 
+
+    // Keyboard Navigation
+  const handleKeyDown = (event) => {
+
+    if (event.ctrlKey && event.key === 't') {
+      event.preventDefault();
+      setTheme(theme === 'light' ? 'dark' : 'light');
+    }
+
+    if (event.ctrlKey && event.key === '-') {
+      event.preventDefault();
+      setFontSize(Math.max(12, fontSize - 2));
+    }
+
+    if (event.ctrlKey && event.key === '=') {
+      event.preventDefault();
+      setFontSize(Math.min(24, fontSize + 2));
+    }
+
+    if (event.ctrlKey && event.key === 'b') {
+      event.preventDefault();
+      navigate(-1);
+    }
+
+    if (event.ctrlKey && event.key === 'l') {
+      event.preventDefault();
+      handleLogout();
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  });
+
+
+    useEffect(() => {
+      document.documentElement.setAttribute('data-theme', theme);
+      document.documentElement.style.fontSize = `${fontSize}px`;
+    }, [theme, fontSize]);
+  
     // Check if token is valid on component load
   useEffect(() => {
     const checkTokenValidity = async () => {
@@ -105,6 +150,28 @@ const FeedbackForm = () => {
                 <Link to="/profile">
                     <button className="navbar-button">Go to Profile</button>
                 </Link> */}
+
+<button 
+            onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
+            aria-label="Toggle Dark Mode"
+          >
+            {theme === 'light' ? '🌙' : '☀️'}
+        </button>
+
+          <div className="font-controls">
+            <button 
+              onClick={() => setFontSize(Math.max(12, fontSize - 2))}
+              aria-label="Decrease Text Size"
+            >
+              A-
+            </button>
+            <button 
+              onClick={() => setFontSize(Math.min(24, fontSize + 2))}
+              aria-label="Increase Text Size"
+            >
+              A+
+            </button>
+          </div>
             </div>
 
             <h3>Provide Feedback</h3>
