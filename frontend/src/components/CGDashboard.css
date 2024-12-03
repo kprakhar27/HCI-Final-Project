@@ -95,6 +95,24 @@
     background-color: #e68900;
 }
 
+/* Feedback Button */
+.delete-btn {
+    background-color: #ff9900;
+    color: white;
+    padding: 12px 24px;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+}
+
+.delete-btn:hover {
+    background-color: #e68900;
+}
+
 /* Responsive Layout */
 @media (max-width: 768px) {
     .profile-pic {
