@@ -156,22 +156,10 @@ def llm_response():
             message_list.append({"role": message.origin, "content": message.content})
 
         message_list.append(context)
-<<<<<<< Updated upstream
-
-        print(message_list[::-1])
 
         payload = {"model": "gpt-3.5-turbo", "messages": message_list[::-1]}
 
-        print(payload)
 
-=======
-        
-        payload = {
-            "model": "gpt-3.5-turbo",
-            "messages": message_list[::-1]
-        }
-                
->>>>>>> Stashed changes
         response = requests.post(OPENAI_API_URL, json=payload, headers=headers)
         # write llm code
         if response.status_code == 200:
