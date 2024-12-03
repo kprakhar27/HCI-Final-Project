@@ -47,10 +47,19 @@ def register():
             new_user = Users(
                 username=username, password_hash=hashed_password, role=role
             )
+            access_token = create_access_token(identity=new_user.username)
+
+            # Store the generated access token in the user's record
+            new_user.access_token = access_token
             db.session.add(new_user)
             db.session.commit()
 
-            return jsonify({"message": "User registered successfully"}), 201
+            return (
+                jsonify(
+                    {"message": "User registered successfully", "token": access_token}
+                ),
+                201,
+            )
         except Exception as e:
             return (
                 jsonify({"error": "Unable to register user", "detail": e.args[0]}),
@@ -108,7 +117,7 @@ def get_patients():
     current_user = get_jwt_identity()  # Get the current logged-in user's identity
     print("Current_user:", current_user)
     caregiver = Users.query.filter_by(
-        username=current_user["username"]
+        username=current_user
     ).first()  # Get user by username
 
     query = f"""SELECT *
@@ -133,7 +142,7 @@ def add_patient():
     current_user = get_jwt_identity()  # Get the current logged-in user
 
     # Check if the user is a caregiver
-    user = Users.query.filter_by(username=current_user["username"]).first()
+    user = Users.query.filter_by(username=current_user).first()
     if user is None or user.role != "caregiver":
         return jsonify({"error": "Unauthorized, only caregivers can add patients"}), 403
 
@@ -162,7 +171,7 @@ def give_feedback():
         data = request.get_json()
         feedback_text = data.get("feedback_text")
 
-        user = Users.query.filter_by(username=current_user["username"]).first()
+        user = Users.query.filter_by(username=current_user).first()
 
         if not feedback_text:
             return jsonify({"message": "Feedback text is required"}), 400
