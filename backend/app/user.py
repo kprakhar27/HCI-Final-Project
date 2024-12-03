@@ -100,9 +100,7 @@ def llm_response():
         to the user's preferences and communication style. Always strive to provide 
         direct answers when the question is clear. If the question is vague or lacks 
         sufficient detail, engage the user by discussing their preferred topics or gently
-        asking for clarification. Some of the preffered topics for the user are {patient.topic}.
-        The user has requested you to answer any question in a {patient.level} way.
-        The user has shared the following details about himself: {patient.disorder_details}.
+        asking for clarification. 
 
         Guidelines for Interaction:
         Clarity and Precision: Always give direct and fact-based answers when possible. 
@@ -121,6 +119,10 @@ def llm_response():
         If the user asks, "What's something interesting?" and they like trains, 
         you might respond with, "Did you know that the world’s fastest train is 
         the Shanghai Maglev, which can reach speeds of 267 miles per hour?"
+        
+        Some of the preffered topics for the user are {patient.topic}.
+        The user has requested you to answer any question in a {patient.level} way.
+        The user has shared the following details about himself: {patient.disorder_details}.
         """
         
         context = {"role": "system", "content": context_message}

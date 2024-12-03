@@ -305,13 +305,7 @@ function PreferenceForm() {
                   </select>
               </label>
 
-              <label>
-                  (If willing) Share some details about you:
-                  <textarea
-                      value={disorderDetails}
-                      onChange={(e) => setDisorderDetails(e.target.value)}
-                  />
-              </label>
+              
 
               <label>
                   Are you diagnosed?
@@ -326,6 +320,14 @@ function PreferenceForm() {
               </label>
 
               <label>
+                  Anything you would like the AI assistant to make note of?
+                  <textarea
+                      value={disorderDetails}
+                      onChange={(e) => setDisorderDetails(e.target.value)}
+                  />
+              </label>
+
+              <label>
                   Do you have a caregiver? If yes, what is their username (you can add it later as well):
                   <input
                       type="text"
@@ -336,7 +338,7 @@ function PreferenceForm() {
               </label>
 
               <label>
-                  How would you like the assistant to respond? You can choose how simple or detailed the answers should be
+                  How would you like the AI assistant to respond? You can choose how simple or detailed the answers should be
                   <select
                       value={level}
                       onChange={(e) => setLevel(e.target.value)}

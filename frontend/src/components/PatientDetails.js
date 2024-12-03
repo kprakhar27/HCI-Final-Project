@@ -44,7 +44,7 @@ function PatientDetails() {
         e.preventDefault();
         setIsSubmitting(true);
         try {
-            const response = await fetch(`http://127.0.0.1:8000/user/patients/1/topics`, {
+            const response = await fetch(`http://127.0.0.1:8000/user/patients/${window.location.pathname.split("/")[2]}/topics`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -59,6 +59,7 @@ function PatientDetails() {
 
             alert('Session topics submitted successfully!');
             setSessionTopics('');
+            window.location.reload();
         } catch (error) {
             console.error('Error submitting topics:', error);
             alert('Failed to submit session topics.');
