@@ -60,7 +60,8 @@ def llm_response():
 
         current_user = get_jwt_identity()
         user = Users.query.filter_by(username=current_user).first()
-        patient = Patient.query.filter_by(user_id=user.id).first()
+        patient = Patient.query.filter_by(user_id = user.id).first()
+
 
         headers = {
             "Authorization": f"Bearer {OPENAI_API_KEY}",
@@ -96,13 +97,14 @@ def llm_response():
         you might respond with, "Did you know that the world’s fastest train is 
         the Shanghai Maglev, which can reach speeds of 267 miles per hour?"
         """
+        
+        context = [{"role": "system", "content": context_message}]
+        
+        context.append({"role": "user", "content": input})
 
         payload = {
             "model": "gpt-3.5-turbo",
-            "messages": [
-                {"role": "system", "content": context_message},
-                {"role": "user", "content": input},
-            ],
+            "messages": context
         }
 
         # payload = {
@@ -138,13 +140,11 @@ def add_profile():
         data = request.get_json()
 
         current_user = get_jwt_identity()
-        caregiver_username = (data.get("caregiverUsername"),)
-
+        caregiver_username=data.get('caregiverUsername'),
+        
         user_query = f"""SELECT id FROM users WHERE username = '{current_user}';"""
-        caregiver_query = (
-            f"""SELECT id FROM users WHERE username = '{caregiver_username[0]}';"""
-        )
-
+        caregiver_query = f"""SELECT id FROM users WHERE username = '{caregiver_username[0]}';"""
+        
         with db.engine.connect() as conn:
             user_result = conn.execute(text(user_query))
             caregiver_result = conn.execute(text(caregiver_query))
@@ -194,6 +194,7 @@ def get_profile():
 		ON u.id=p.user_id
 		AND u.username='{current_user}';"""
 
+        
         with db.engine.connect() as conn:
             result = conn.execute(text(query))
 
@@ -237,19 +238,18 @@ def update_profile():
 
         current_user = get_jwt_identity()
         user = Users.query.filter_by(username=current_user).first()
-        caregiver = Users.query.filter_by(
-            username=data.get("caregiverUsername")
-        ).first()
-
-        patient = Patient.query.filter_by(user_id=user.id).first()
-
-        patient.name = data["name"]
-        patient.age = data["age"]
-        patient.occupation = data["occupation"]
-        patient.topic = data["topic"]
-        patient.disorder_details = data["disorderDetails"]
-        patient.is_diagnosed = data["isDiagnosed"]
-        patient.level = data["level"]
+        caregiver =  Users.query.filter_by(username=data.get('caregiverUsername')).first()
+        
+        
+        patient = Patient.query.filter_by(user_id = user.id).first()
+                
+        patient.name=data['name']
+        patient.age=data['age']
+        patient.occupation=data['occupation']
+        patient.topic=data['topic']
+        patient.disorder_details=data['disorderDetails']
+        patient.is_diagnosed=data['isDiagnosed']
+        patient.level=data['level']
         patient.user_id = user.id
         if caregiver:
             patient.caregiver_id = caregiver.id
