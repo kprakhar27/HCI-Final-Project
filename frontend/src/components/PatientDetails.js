@@ -20,11 +20,11 @@ function PatientDetails() {
                         Authorization: `Bearer ${localStorage.getItem('token')}`,
                     },
                 });
-    
+
                 if (!response.ok) {
                     throw new Error('Failed to fetch patient details');
                 }
-    
+
                 const data = await response.json();
                 setPatient(data);
                 console.info(data);
@@ -35,10 +35,10 @@ function PatientDetails() {
                 setLoading(false);
             }
         };
-    
+
         fetchPatientData();
     }, [patientId]);
-    
+
 
     const handleTopicSubmit = async (e) => {
         e.preventDefault();
@@ -80,8 +80,8 @@ function PatientDetails() {
 
             <h2>{patient.name}</h2>
             <p><strong>Age:</strong> {patient.age}</p>
-            <p><strong>Condition Level:</strong> {patient.level}</p>
-            <p><strong>Notes:</strong> {patient.topic}</p>
+            <p><strong>Level:</strong> {patient.level}</p>
+            <p><strong>Topic for discussion:</strong> {patient.topic}</p>
 
             {/* Time Spent Plot Section */}
             <div className="plot-section">

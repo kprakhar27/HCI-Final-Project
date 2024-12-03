@@ -55,41 +55,44 @@ def llm_response():
 
         data = request.get_json()
         input = data.get("prompt")
-        
-        print('---------')
+
+        print("---------")
 
         if not input:
             return jsonify({"error": "No prompt provided"}), 400
 
         current_user = get_jwt_identity()
         user = Users.query.filter_by(username=current_user).first()
-        patient = Patient.query.filter_by(user_id = user.id).first()
-
+        patient = Patient.query.filter_by(user_id=user.id).first()
 
         headers = {
             "Authorization": f"Bearer {OPENAI_API_KEY}",
             "Content-Type": "application/json",
         }
-        
-        body = {
-            "model": "omni-moderation-latest",
-            "input": input
-        }
-        
-        print('---------')
-        
+
+        body = {"model": "omni-moderation-latest", "input": input}
+
+        print("---------")
+
         moderation = requests.post(MODERATION_URL, json=body, headers=headers)
         if moderation.status_code == 200:
             response_data = moderation.json()
             mod_output = response_data["results"][0]["flagged"]
             if mod_output:
-                return jsonify({"response": "Sorry, I can't talk about this topic. You can ask me something else!"}), 200
-                
+                return (
+                    jsonify(
+                        {
+                            "response": "Sorry, I can't talk about this topic. You can ask me something else!"
+                        }
+                    ),
+                    200,
+                )
+
         else:
             print(moderation.status_code)
             print(moderation.text)
             return jsonify({"response": "Sorry, I can't respond at the moment!"}), 200
-        
+
         new_message = Messages(user_id=user.id, content=input, origin="user")
         db.session.add(new_message)
         db.session.commit()
@@ -124,45 +127,50 @@ def llm_response():
         The user has requested you to answer any question in a {patient.level} way.
         The user has shared the following details about himself: {patient.disorder_details}.
         """
-        
+
         context = {"role": "system", "content": context_message}
-        
-        messages = Messages.query.filter_by(user_id=user.id).order_by(desc(Messages.id)).limit(10)
-        
+
+        messages = (
+            Messages.query.filter_by(user_id=user.id)
+            .order_by(desc(Messages.id))
+            .limit(10)
+        )
+
         message_list = []
-        
+
         for message in messages:
             message_list.append({"role": message.origin, "content": message.content})
-            
+
         message_list.append(context)
-        
+
         print(message_list[::-1])
 
-        payload = {
-            "model": "gpt-3.5-turbo",
-            "messages": message_list[::-1]
-        }
-        
+        payload = {"model": "gpt-3.5-turbo", "messages": message_list[::-1]}
+
         print(payload)
-        
+
         response = requests.post(OPENAI_API_URL, json=payload, headers=headers)
         # write llm code
         if response.status_code == 200:
             response_data = response.json()
             llm_output = response_data["choices"][0]["message"]["content"]
-            
-            new_message = Messages(user_id=user.id, content=llm_output, origin="assistant")
+
+            new_message = Messages(
+                user_id=user.id, content=llm_output, origin="assistant"
+            )
             db.session.add(new_message)
             db.session.commit()
-            
+
             return jsonify({"response": llm_output}), 200
         else:
             print(response.text)
             return (
-                jsonify({"response": "Error from OpenAI API", "details": response.text}),
+                jsonify(
+                    {"response": "Error from OpenAI API", "details": response.text}
+                ),
                 response.status_code,
             )
-            
+
     except Exception as e:
         print(e)
         response = {"error": "error occured", "detail": str(e)}
@@ -176,11 +184,13 @@ def add_profile():
         data = request.get_json()
 
         current_user = get_jwt_identity()
-        caregiver_username=data.get('caregiverUsername'),
-        
+        caregiver_username = (data.get("caregiverUsername"),)
+
         user_query = f"""SELECT id FROM users WHERE username = '{current_user}';"""
-        caregiver_query = f"""SELECT id FROM users WHERE username = '{caregiver_username[0]}';"""
-        
+        caregiver_query = (
+            f"""SELECT id FROM users WHERE username = '{caregiver_username[0]}';"""
+        )
+
         with db.engine.connect() as conn:
             user_result = conn.execute(text(user_query))
             caregiver_result = conn.execute(text(caregiver_query))
@@ -230,7 +240,6 @@ def get_profile():
 		ON u.id=p.user_id
 		AND u.username='{current_user}';"""
 
-        
         with db.engine.connect() as conn:
             result = conn.execute(text(query))
 
@@ -274,18 +283,19 @@ def update_profile():
 
         current_user = get_jwt_identity()
         user = Users.query.filter_by(username=current_user).first()
-        caregiver =  Users.query.filter_by(username=data.get('caregiverUsername')).first()
-        
-        
-        patient = Patient.query.filter_by(user_id = user.id).first()
-                
-        patient.name=data['name']
-        patient.age=data['age']
-        patient.occupation=data['occupation']
-        patient.topic=data['topic']
-        patient.disorder_details=data['disorderDetails']
-        patient.is_diagnosed=data['isDiagnosed']
-        patient.level=data['level']
+        caregiver = Users.query.filter_by(
+            username=data.get("caregiverUsername")
+        ).first()
+
+        patient = Patient.query.filter_by(user_id=user.id).first()
+
+        patient.name = data["name"]
+        patient.age = data["age"]
+        patient.occupation = data["occupation"]
+        patient.topic = data["topic"]
+        patient.disorder_details = data["disorderDetails"]
+        patient.is_diagnosed = data["isDiagnosed"]
+        patient.level = data["level"]
         patient.user_id = user.id
         if caregiver:
             patient.caregiver_id = caregiver.id
@@ -368,4 +378,59 @@ def getPatientDetchrailsForCaregiver(id):
 
     except Exception as e:
         response = {"error": "error occured", "detail": str(e), "status": "fail"}
+        return jsonify(response), 400
+
+
+@user_bp.route("/deleteprofile", methods=["POST"])
+@jwt_required()
+def delete_profile():
+    try:
+        # Get current user's identity from JWT
+        current_user = get_jwt_identity()
+
+        # Retrieve the user record
+        user = Users.query.filter_by(username=current_user).first()
+        if not user:
+            return jsonify({"error": "User not found.", "status": "fail"}), 404
+
+        # Find the associated patient record
+        patient = Patient.query.filter_by(user_id=user.id).first()
+        if not patient:
+            return (
+                jsonify({"error": "Patient profile not found.", "status": "fail"}),
+                404,
+            )
+
+        # Delete all related messages for this user
+        Messages.query.filter_by(user_id=user.id).delete()
+
+        # Delete all related feedback messages for the users
+        Feedback.query.filter_by(user_id=user.id).delete()
+
+        # Delete the patient record
+        db.session.delete(patient)
+
+        # Delete the user record
+        db.session.delete(user)
+
+        # Commit all changes
+        db.session.commit()
+
+        return (
+            jsonify(
+                {
+                    "message": "Patient profile deleted successfully.",
+                    "status": "success",
+                }
+            ),
+            200,
+        )
+
+    except Exception as e:
+        db.session.rollback()  # Rollback changes in case of failure
+        response = {
+            "error": "Error occurred while deleting patient profile.",
+            "detail": str(e),
+            "status": "fail",
+        }
         return jsonify(response), 400

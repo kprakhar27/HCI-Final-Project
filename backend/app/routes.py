@@ -146,3 +146,49 @@ def update_profile():
     except Exception as e:
         response = {"error": "error occured", "detail": str(e), "status": "fail"}
         return jsonify(response), 400
+
+
+@routes_bp.route("/deleteprofile", methods=["POST"])
+@jwt_required()
+def delete_profile():
+    try:
+        # Get the current user's identity
+        current_user = get_jwt_identity()
+
+        # Find the user in the database
+        user = Users.query.filter_by(username=current_user).first()
+        if not user:
+            return jsonify({"error": "User not found", "status": "fail"}), 404
+
+        # Find the caregiver profile associated with the user
+        caregiver = Caregiver.query.filter_by(user_id=user.id).first()
+        if not caregiver:
+            return (
+                jsonify({"error": "Caregiver profile not found", "status": "fail"}),
+                404,
+            )
+
+        # Remove caregiver_id from patients associated with this caregiver
+        Patient.query.filter_by(caregiver_id=user.id).update({"caregiver_id": None})
+
+        # Delete all related feedback messages for the users
+        Feedback.query.filter_by(user_id=user.id).delete()
+
+        # Delete the caregiver profile
+        db.session.delete(caregiver)
+
+        # Delete the user record
+        db.session.delete(user)
+
+        # Commit all changes to the database
+        db.session.commit()
+
+        return (
+            jsonify({"message": "Profile deleted successfully", "status": "success"}),
+            200,
+        )
+
+    except Exception as e:
+        # Return a detailed error response if something goes wrong
+        response = {"error": "An error occurred", "detail": str(e), "status": "fail"}
+        return jsonify(response), 500

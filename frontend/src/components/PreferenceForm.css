@@ -1,25 +1,41 @@
 /* Root variables for light and dark themes */
 :root {
-  --bg-primary: #f4f7fc; /* Light background */
-  --bg-secondary: #ffffff; /* Light form background */
-  --text-primary: #333333; /* Dark text for light mode */
-  --accent-color: #007bff; /* Light accent color */
-  --nav-color: #007bff; /* Navbar background color */
-  --input-border: #ddd; /* Light input border */
-  --success-color: #28a745; /* Light success message color */
-  --error-color: #ff6b6b; /* Light error message color */
+  --bg-primary: #f4f7fc;
+  /* Light background */
+  --bg-secondary: #ffffff;
+  /* Light form background */
+  --text-primary: #333333;
+  /* Dark text for light mode */
+  --accent-color: #007bff;
+  /* Light accent color */
+  --nav-color: #007bff;
+  /* Navbar background color */
+  --input-border: #ddd;
+  /* Light input border */
+  --success-color: #28a745;
+  /* Light success message color */
+  --error-color: #ff6b6b;
+  /* Light error message color */
   --transition-speed: 0.3s;
 }
 
 [data-theme='dark'] {
-  --bg-primary: #1e1e1e; /* Dark background */
-  --bg-secondary: #2a2a2a; /* Dark form background */
-  --text-primary: #e4e4e4; /* Light text for dark mode */
-  --accent-color: #4a90e2; /* Dark accent color */
-  --nav-color: #002f5d; /* Dark navbar color */
-  --input-border: #555; /* Dark input border */
-  --success-color: #4caf50; /* Dark success message color */
-  --error-color: #ff6b6b; /* Dark error message color */
+  --bg-primary: #1e1e1e;
+  /* Dark background */
+  --bg-secondary: #2a2a2a;
+  /* Dark form background */
+  --text-primary: #e4e4e4;
+  /* Light text for dark mode */
+  --accent-color: #4a90e2;
+  /* Dark accent color */
+  --nav-color: #002f5d;
+  /* Dark navbar color */
+  --input-border: #555;
+  /* Dark input border */
+  --success-color: #4caf50;
+  /* Dark success message color */
+  --error-color: #ff6b6b;
+  /* Dark error message color */
 }
 
 /* General preference form container */
@@ -29,7 +45,8 @@
   align-items: center;
   min-height: 100vh;
   background-color: var(--bg-primary);
-  padding-top: 60px; /* To avoid content getting hidden under the navbar */
+  padding-top: 60px;
+  /* To avoid content getting hidden under the navbar */
   transition: background-color var(--transition-speed), color var(--transition-speed);
 }
 
@@ -37,7 +54,8 @@
 .navbar {
   width: 100%;
   display: flex;
-  justify-content: flex-start; /* Align buttons to the left */
+  justify-content: flex-start;
+  /* Align buttons to the left */
   background-color: var(--nav-color);
   padding: 10px 20px;
   position: fixed;
@@ -66,7 +84,8 @@
 
 /* Form styling */
 h2 {
-  margin-top: 80px; /* Adjust content to avoid navbar overlap */
+  margin-top: 80px;
+  /* Adjust content to avoid navbar overlap */
   text-align: center;
   color: var(--text-primary);
 }
@@ -88,7 +107,9 @@ label {
   color: var(--text-primary);
 }
 
-input, select, textarea {
+input,
+select,
+textarea {
   width: 96%;
   padding: 10px;
   margin-bottom: 15px;
@@ -148,4 +169,18 @@ button[type="submit"]:hover {
 
 .feedback-btn:hover {
   background-color: darken(var(--success-color), 10%);
+}
+
+.delete-button {
+  background-color: #ff4d4d;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  margin-top: 10px;
+  cursor: pointer;
+  border-radius: 10px;
+}
+
+.delete-button:hover {
+  background-color: #ff1a1a;
 }

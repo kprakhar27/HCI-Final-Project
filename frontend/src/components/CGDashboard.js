@@ -168,14 +168,6 @@ function CGDashboard() {
             A+
           </button>
         </div>
-
-        <button
-          className="navbar-button"
-          title="Delete your profile and data permanently"
-          style={{ marginRight: '10px' }}
-        >
-          Delete Profile
-        </button>
       </div>
 
       <h2>Welcome to your Dashboard</h2>
