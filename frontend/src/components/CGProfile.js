@@ -11,8 +11,14 @@ function CGProfile() {
     const [status, setStatus] = useState('notexist');
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
+    const [theme, setTheme] = useState("light");
+    const [fontSize, setFontSize] = useState(16);
     const navigate = useNavigate();
 
+    useEffect(() => {
+        document.documentElement.setAttribute('data-theme', theme);
+        document.documentElement.style.fontSize = `${fontSize}px`;
+      }, [theme, fontSize]);
     // Check if token is valid on component load
     useEffect(() => {
         const checkTokenValidity = async () => {
@@ -151,6 +157,28 @@ function CGProfile() {
               <Link to="/CGDashboard">
                   <button className="navbar-button">Go to Dashboard</button>
               </Link>
+
+              <button 
+            onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
+            aria-label="Toggle Dark Mode"
+          >
+            {theme === 'light' ? '🌙' : '☀️'}
+        </button>
+
+          <div className="font-controls">
+            <button 
+              onClick={() => setFontSize(Math.max(12, fontSize - 2))}
+              aria-label="Decrease Text Size"
+            >
+              A-
+            </button>
+            <button 
+              onClick={() => setFontSize(Math.min(24, fontSize + 2))}
+              aria-label="Increase Text Size"
+            >
+              A+
+            </button>
+          </div>
           </div>
 
           <h2>Caregiver Profile</h2>

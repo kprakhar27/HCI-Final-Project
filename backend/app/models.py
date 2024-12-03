@@ -10,6 +10,13 @@ class Users(db.Model):
     access_token = db.Column(db.String(500), nullable=True)
     role = db.Column(db.String(50), nullable=True)
 
+class Messages(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    content = db.Column(db.Text, nullable=False)
+    origin = db.Column(db.String(120), nullable=False)
+    timestamp = db.Column(db.TIMESTAMP, default=db.func.current_timestamp())
+
 class RevokedToken(db.Model):
     __tablename__ = 'revoked_tokens'
 

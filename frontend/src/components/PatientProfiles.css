@@ -1,14 +1,18 @@
+
+
+
 .patient-container {
     margin: 2rem;
     padding: 1rem;
-    background: #f9f9f9;
+    background: var(--bg-secondary);
     border-radius: 10px;
+    width: 50%;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .patient-container h2 {
     text-align: center;
-    color: #333;
+    color: var(--text-primary);
     margin-bottom: 1rem;
 }
 
@@ -21,14 +25,12 @@
 .patient-table th,
 .patient-table td {
     padding: 0.8rem;
-    text-align: left;
     border-bottom: 1px solid #ddd;
 }
 
 .patient-table th {
     background: #2575fc;
     color: white;
-    text-align: center;
 }
 
 .patient-table tr {

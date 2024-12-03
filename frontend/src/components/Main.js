@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './Main.css'; 
 import { Link, useNavigate } from 'react-router-dom';
+import ReactMarkdown from 'react-markdown';
+
 function Main() {
   const [messages, setMessages] = useState([]); // Store conversation history
   const [input, setInput] = useState(''); // Store user input
@@ -9,6 +11,7 @@ function Main() {
   const [theme, setTheme] = useState("light");
   const [fontSize, setFontSize] = useState(16);
   const messagesEndRef = useRef(null);
+  
   // const [transcript, setTranscript] = useState("");
   
 
@@ -255,7 +258,8 @@ function Main() {
               aria-label={message.role === 'user' ? 'Your message' : 'Chatbot message'}
             >
               <div className="message-text" aria-label={message.content}>
-                {message.content}
+              <ReactMarkdown>{message.content}</ReactMarkdown>
+                
                 <span className="message-timestamp">{message.timestamp}</span>
               </div>
             </div>

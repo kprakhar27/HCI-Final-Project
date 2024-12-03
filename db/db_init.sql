@@ -14,6 +14,7 @@ CREATE TABLE IF NOT EXISTS messages (
     id SERIAL PRIMARY KEY,
     user_id INTEGER REFERENCES users(id),
     content TEXT NOT NULL,
+    origin VARCHAR(50) NOT NULL,
     timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 

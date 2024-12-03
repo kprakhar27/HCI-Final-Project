@@ -1,12 +1,12 @@
 from flask import Blueprint, jsonify, request
 from flask_jwt_extended import jwt_required, get_jwt_identity
-from sqlalchemy import text
+from sqlalchemy import text, desc
 from dotenv import load_dotenv
 import os
 
 load_dotenv()
 
-from .models import Patient, Feedback, Users
+from .models import Patient, Feedback, Users, Messages
 from . import db
 
 import requests
@@ -51,9 +51,12 @@ def llm_response():
     try:
         OPENAI_API_KEY = os.environ["OPENAI_API_KEY"]
         OPENAI_API_URL = "https://api.openai.com/v1/chat/completions"
+        MODERATION_URL = "https://api.openai.com/v1/moderations"
 
         data = request.get_json()
         input = data.get("prompt")
+        
+        print('---------')
 
         if not input:
             return jsonify({"error": "No prompt provided"}), 400
@@ -67,6 +70,29 @@ def llm_response():
             "Authorization": f"Bearer {OPENAI_API_KEY}",
             "Content-Type": "application/json",
         }
+        
+        body = {
+            "model": "omni-moderation-latest",
+            "input": input
+        }
+        
+        print('---------')
+        
+        moderation = requests.post(MODERATION_URL, json=body, headers=headers)
+        if moderation.status_code == 200:
+            response_data = moderation.json()
+            mod_output = response_data["results"][0]["flagged"]
+            if mod_output:
+                return jsonify({"response": "Sorry, I can't talk about this topic. You can ask me something else!"}), 200
+                
+        else:
+            print(moderation.status_code)
+            print(moderation.text)
+            return jsonify({"response": "Sorry, I can't respond at the moment!"}), 200
+        
+        new_message = Messages(user_id=user.id, content=input, origin="user")
+        db.session.add(new_message)
+        db.session.commit()
 
         context_message = f"""You are a supportive and detail-oriented conversational 
         assistant designed to interact with individuals on the autism spectrum. 
@@ -74,11 +100,10 @@ def llm_response():
         to the user's preferences and communication style. Always strive to provide 
         direct answers when the question is clear. If the question is vague or lacks 
         sufficient detail, engage the user by discussing their preferred topics or gently
-        asking for clarification.
-        The user has the following profile:
-        Autism Level: {patient.level}
-        Diagnosis Details:{patient.disorder_details}
-        Preferred Topics: {patient.topic}
+        asking for clarification. Some of the preffered topics for the user are {patient.topic}.
+        The user has requested you to answer any question in a {patient.level} way.
+        The user has shared the following details about himself: {patient.disorder_details}.
+
         Guidelines for Interaction:
         Clarity and Precision: Always give direct and fact-based answers when possible. 
         Avoid overloading with unnecessary information unless requested.
@@ -98,37 +123,46 @@ def llm_response():
         the Shanghai Maglev, which can reach speeds of 267 miles per hour?"
         """
         
-        context = [{"role": "system", "content": context_message}]
+        context = {"role": "system", "content": context_message}
         
-        context.append({"role": "user", "content": input})
+        messages = Messages.query.filter_by(user_id=user.id).order_by(desc(Messages.id)).limit(10)
+        
+        message_list = []
+        
+        for message in messages:
+            message_list.append({"role": message.origin, "content": message.content})
+            
+        message_list.append(context)
+        
+        print(message_list[::-1])
 
         payload = {
             "model": "gpt-3.5-turbo",
-            "messages": context
+            "messages": message_list[::-1]
         }
-
-        # payload = {
-        #     "model": "gpt-3.5-turbo",
-        #     "messages": [{"role": "user", "content": input}]
-        # }
-
+        
+        print(payload)
+        
         response = requests.post(OPENAI_API_URL, json=payload, headers=headers)
         # write llm code
         if response.status_code == 200:
             response_data = response.json()
             llm_output = response_data["choices"][0]["message"]["content"]
+            
+            new_message = Messages(user_id=user.id, content=llm_output, origin="assistant")
+            db.session.add(new_message)
+            db.session.commit()
+            
             return jsonify({"response": llm_output}), 200
         else:
+            print(response.text)
             return (
-                jsonify({"error": "Error from OpenAI API", "details": response.text}),
-                response.status_cod,
+                jsonify({"response": "Error from OpenAI API", "details": response.text}),
+                response.status_code,
             )
-
-        # Placeholder for AI processing logic.
-        # response = {"response": llm_output}
-
-        # return jsonify(response), 200
+            
     except Exception as e:
+        print(e)
         response = {"error": "error occured", "detail": str(e)}
         return jsonify(response), 400
 

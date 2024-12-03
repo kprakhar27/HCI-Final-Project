@@ -11,7 +11,7 @@ function CGDashboard() {
     // const [messages, setMessages] = useState([]);
     const [error, setError] = useState(null);
     const [theme, setTheme] = useState("light");
-  const [fontSize, setFontSize] = useState(16);
+    const [fontSize, setFontSize] = useState(16);
     const navigate = useNavigate();
 
 

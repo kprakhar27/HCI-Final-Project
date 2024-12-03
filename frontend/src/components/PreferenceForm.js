@@ -292,21 +292,21 @@ function PreferenceForm() {
                       required
                   >
                       <option value={topic}>{topic}</option>
-                      <option value="just_use">I would like to just use it</option>
-                      <option value="daily_planning">Daily planning</option>
+                      <option value="Nothing in particular">Nothing in particular</option>
+                      <option value="daily planning">Daily planning</option>
                       <option value="health">Health (physical/mental)</option>
                       <option value="grooming">Grooming</option>
-                      <option value="household_chores">Household chores</option>
-                      <option value="financial_management">Financial management</option>
-                      <option value="work_study">Work or study</option>
-                      <option value="job_evaluation">Job evaluation criteria</option>
-                      <option value="social_relationships">Social relationships and communication</option>
-                      <option value="small_talk">Small talk</option>
+                      <option value="household chores">Household chores</option>
+                      <option value="financial management">Financial management</option>
+                      <option value="work study">Work or study</option>
+                      <option value="job evaluation">Job evaluation criteria</option>
+                      <option value="social relationships">Social relationships and communication</option>
+                      <option value="small talk">Small talk</option>
                   </select>
               </label>
 
               <label>
-                  (If willing) Share some details about your disorder:
+                  (If willing) Share some details about you:
                   <textarea
                       value={disorderDetails}
                       onChange={(e) => setDisorderDetails(e.target.value)}
@@ -335,18 +335,19 @@ function PreferenceForm() {
                   />
               </label>
 
-              {/* <label>
-                  Level of severity:
+              <label>
+                  How would you like the assistant to respond? You can choose how simple or detailed the answers should be
                   <select
                       value={level}
                       onChange={(e) => setLevel(e.target.value)}
                   >
                       <option value={level}>{level}</option>
-                      <option value="1">Level 1</option>
-                      <option value="2">Level 2</option>
-                      <option value="3">Level 3</option>
+                      <option value="Simple and Clear">Simple and Clear</option>
+                      <option value="Detailed and Explanatory">Detailed and Explanatory</option>
+                      <option value="Friendly and Casual">Friendly and Casual</option>
+                      {/* <option value="factual">Just the Fact</option> */}
                   </select>
-              </label> */}
+              </label>
 
               <button type="submit">Save Preferences</button>
           </form>

@@ -49,6 +49,8 @@ function PatientProfiles() {
         return <div>Loading patients...</div>;
     }
 
+    
+
     if (error) {
         return <div>{error}</div>;
     }
