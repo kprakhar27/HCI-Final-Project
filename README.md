@@ -9,6 +9,8 @@ Before running the project with Docker, ensure you have the following installed:
 * Docker (v20.x or higher)
 * Docker Compose (v1.29 or higher)
 
+Make sure Docker Desktop App is running.
+
 ## Running the Project with Docker
 
 ### Clone the Repository
@@ -42,44 +44,26 @@ echo OPENAI_API_KEY=<API-KEY> > .env
 # Create virtual environment
 docker compose build --no-cache
 
+# If you get a 401 unauthorized error:
+# failed to solve: python:3.9-slim: failed to authorize: failed to fetch oauth token: unexpected status from GET request to https://auth.docker.io/token?scope=repository%3Alibrary%2Fpython%3Apull&service=registry.docker.io: #   401 Unauthorized
+
+# please run:
+docker login
+
+# then Retry:
+docker compose build --no-cache
+
 # Activate Virtual Environemt
 docker compose up -d
 ```
 This command will:
-* Build all Docker images for database.
+* Build all Docker images for the project.
 * Start the containers for:
     * PostgreSQL database on port 5432
     * pgAdmin sql terminal on port 5050
+    * backend on port 8000
+    * frontend on port 3000
 
-### Run Flask Backend
-
-* Run the following commands to run the flask application in the terminal
-* Make sure to cd into the **backend** directory
-```bash
-# Create virtual environment
-python -m venv ./venv 
-
-# Activate Virtual Environemt
-source venv/bin/activate
-
-# Install Requirements
-pip install -r requirements.txt 
-
-# Run App
-python app.py
-```
-
-### Run React Frontend
-
-* Run the following commands to run the react application in the terminal
-* Make sure to cd into the **frontend** directory
-```bash
-# install npm dependencies
-npm i
-
-# Start react app
-npm start
-```
 
 ### Access the Application
 

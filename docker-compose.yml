@@ -1,15 +1,4 @@
 services:
-  backend:
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
-    ports:
-      - "8000:8000"
-    networks:
-      - db
-    depends_on:
-      - db
-
   db:
     container_name: db
     image: postgres:13
@@ -42,6 +31,19 @@ services:
     networks:
       - db
     restart: unless-stopped
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    networks:
+      - db
+    depends_on:
+      db:
+        condition: service_started
+        restart: true
 
   frontend:
     container_name: adapt-ai
