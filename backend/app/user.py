@@ -96,17 +96,17 @@ def llm_response():
         new_message = Messages(user_id=user.id, content=input, origin="user")
         db.session.add(new_message)
         db.session.commit()
-
+        
         feedback = Feedback.query.filter_by(user_id=user.id)
-
+        
         feedback_text = ""
-
+        
         for i in feedback:
             feedback_text = feedback_text + i.feedback_text + ", "
-
+        
         if feedback_text == "":
             feedback_text = "No Feedback"
-
+        
         print(feedback_text)
 
         context_message = f"""You are a supportive and detail-oriented conversational 
@@ -129,17 +129,21 @@ def llm_response():
         overly figurative language or idioms unless they align with the user’s understanding.
         Encouraging Detail: If needed, gently ask clarifying questions to help the 
         user provide more context or refine their inquiry.
-        For example:
-
-        If the user asks, "What's something interesting?" and they like trains, 
-        you might respond with, "Did you know that the world’s fastest train is 
-        the Shanghai Maglev, which can reach speeds of 267 miles per hour?"
+        Sensitivity to Disability: Do not portray user as needing help or having something 
+        wrong. Always encourage user and help them feel positive about themselves.
         
         Some of the feedback which you should keep in mind based on previous interaction with user: {feedback_text}
         
-        Some of the preffered topics for the user are {patient.topic}.
         The user has requested you to answer any question in a {patient.level} way.
         The user has shared the following details about himself: {patient.disorder_details}.
+        
+        DO NOT GIVE MEDICAL DIAGNOSIS OR FINANCIAL INVESTMENT ADVICE
+        
+        For example:
+        If the user asks, "What's something interesting?" and their preferred topics is trains, 
+        you might respond with, "Did you know that the world’s fastest train is 
+        the Shanghai Maglev, which can reach speeds of 267 miles per hour?"
+        Some of the preferred topics for the user are {patient.topic}.
         """
 
         context = {"role": "system", "content": context_message}

@@ -126,11 +126,7 @@ button:disabled {
     background-color: #0056b3;
 }
 
-/* Style for the overall container */
-.patient-details-container {
-    margin: 20px;
-    font-family: 'Arial', sans-serif;
-}
+
 
 /* Style for the profile section */
 .profile-pic {

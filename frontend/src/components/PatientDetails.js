@@ -177,7 +177,7 @@ function PatientDetails() {
 
             <h2>{patient.name}</h2>
             <p><strong>Age:</strong> {patient.age}</p>
-            <p><strong>Level:</strong> {patient.level}</p>
+            <p><strong>Conversation Style:</strong> {patient.level}</p>
             <p><strong>Topic for discussion:</strong> {patient.topic}</p>
 
             {/* Time Spent Plot Section */}

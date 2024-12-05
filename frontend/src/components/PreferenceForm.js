@@ -322,10 +322,10 @@ function PreferenceForm() {
                       <option value="Nothing in particular">Nothing in particular</option>
                       <option value="Daily planning">Daily planning</option>
                       <option value="Health (physical/mental)">Health (physical/mental)</option>
-                      <option value="Grooming">Grooming</option>
+                      <option value="Personal Care and Grooming">Personal Care and Grooming</option>
                       <option value="Household Chores">Household chores</option>
                       <option value="Financial Management">Financial management</option>
-                      <option value="Work Study">Work or study</option>
+                      <option value="Work or Study">Work or study</option>
                       {/* <option value="Job Evaluation">Job evaluation criteria</option> */}
                       <option value="Social Relationships">Social relationships and communication</option>
                       <option value="Small Talk">Small talk</option>
